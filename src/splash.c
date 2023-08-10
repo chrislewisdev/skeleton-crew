@@ -4,7 +4,6 @@
 
 #define STEP_DURATION   20
 
-// Private
 uint8_t splashBkgBaseTile;
 uint8_t step;
 uint8_t stepTimer;
@@ -21,7 +20,7 @@ void stateInitSplash() {
     step = 0;
     stepTimer = 0;
 }
-
+ 
 void stateUpdateSplash() {
     if (stepTimer == 0) {
         if (step == 1) {
@@ -30,8 +29,9 @@ void stateUpdateSplash() {
             BGP_REG = DMG_PALETTE(DMG_WHITE, DMG_WHITE, DMG_LITE_GRAY, DMG_DARK_GRAY);
         } else if (step == 3) {
             BGP_REG = DMG_PALETTE(DMG_WHITE, DMG_LITE_GRAY, DMG_DARK_GRAY, DMG_BLACK);
+        } else if (step == 6) {
+            switchToState(STATE_TITLE);
         }
-        // TODO: Switch to title state at step X
         step++;
         stepTimer = STEP_DURATION;
     }
