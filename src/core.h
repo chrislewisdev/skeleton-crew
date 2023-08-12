@@ -20,10 +20,12 @@ extern AppState appState;
 extern void (*currentStateCleanup)();
 
 extern uint8_t input, previousInput;
+extern uint8_t gfxTileOffset, objTileOffset, spriteOffset;
 
 void switchToState(AppState targetState);
 
 inline uint8_t claimBkgGfx(uint8_t numTiles, const uint8_t *data);
+inline uint8_t claimBkgGfxRaw(uint8_t numTiles);
 inline void releaseAllBkgGfx();
 inline uint8_t claimObjGfx(uint8_t numTiles, const uint8_t *data);
 inline void releaseAllObjGfx();

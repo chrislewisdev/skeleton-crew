@@ -2,7 +2,7 @@
 #define UI_H
 
 typedef struct MenuItem {
-    int tagId;
+    const char *description;
     void (*action)();
 } MenuItem;
 

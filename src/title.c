@@ -3,13 +3,13 @@
 #include "gen/title-screen.h"
 
 const MenuItem mainMenuItems[] = {
-    {.tagId = 0, .action = NULL}, // New game
-    {.tagId = 1, .action = NULL}, // Load game
+    {.description = "New game", .action = NULL},
+    {.description = "Load game", .action = NULL},
     // Credits?
 };
 Menu mainMenu = {
-    .x = 3, .y = 11,
-    .width = 5, .height = 5,
+    .x = 2, .y = 11,
+    .width = 8, .height = 5,
     .selectedIndex = 0,
     .itemsSize = 2,
     .items = mainMenuItems,

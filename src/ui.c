@@ -1,5 +1,7 @@
 #include "core.h"
 #include "ui.h"
+#include "vwf.h"
+#include "vwf_font.h"
 #include "gen/ui9slice.h"
 #include "gen/cursor.h"
 
@@ -12,6 +14,9 @@ void initUi() {
     cursorSprite = claimSprite();
 
     set_sprite_tile(cursorSprite, cursorTile);
+
+    vwf_set_destination(VWF_RENDER_BKG);
+    vwf_load_font(0, vwf_font, (UBYTE)&__bank_vwf_font);
 }
 
 inline void render9slice(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
@@ -34,11 +39,11 @@ inline void render9slice(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
     set_bkg_tile_xy(x + width - 1, y + height - 1, baseNineSliceTile + 7);
 }
 
-//inline void renderTag(uint8_t x, uint8_t y, uint8_t tagId) {
-//    set_bkg_tile_xy(x, y, tagId * 3 + TAGS_TILE_START);
-//    set_bkg_tile_xy(x + 1, y, tagId * 3 + TAGS_TILE_START + 1);
-//    set_bkg_tile_xy(x + 2, y, tagId * 3 + TAGS_TILE_START + 2);
-//}
+inline void renderText(uint8_t x, uint8_t y, const char *text) {
+    // TODO: Work out how to utilise bkg gfx better...
+    uint8_t tilesUsed = vwf_draw_text(x, y, gfxTileOffset, text);
+    claimBkgGfxRaw(tilesUsed);
+}
 
 //inline void renderNumber(uint8_t x, uint8_t y, uint8_t value) {
 //    uint8_t onesDigit = value % 10;
@@ -57,18 +62,18 @@ void renderMenu(Menu *menu) {
     render9slice(x, y, width, height);
     
     // Render items
-    //for (uint8_t i = 0; i < menu->itemsSize; i++) {
-    //   renderTag(x + 1, y + i + 1, menu->items[i].tagId);
-    //}
-}
-
-void unrenderMenu(Menu *menu) {
-    for (uint8_t x = menu->x; x < menu->x + menu->width; x++) {
-        for (uint8_t y = menu->y; y < menu->y + menu->height; y++) {
-            set_bkg_tile_xy(x, y, 0);
-        }
+    for (uint8_t i = 0; i < menu->itemsSize; i++) {
+       renderText(x + 1, y + i + 1, menu->items[i].description);
     }
 }
+
+//void unrenderMenu(Menu *menu) {
+//    for (uint8_t x = menu->x; x < menu->x + menu->width; x++) {
+//        for (uint8_t y = menu->y; y < menu->y + menu->height; y++) {
+//            set_bkg_tile_xy(x, y, 0);
+//        }
+//    }
+//}
 
 void updateMenu(Menu* menu) {
     // Cursor controls

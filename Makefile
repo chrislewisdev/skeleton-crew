@@ -67,13 +67,13 @@ $(OBJDIR)/%.s:	$(SRCDIR)/%.c
 	$(LCC) $(LCCFLAGS) -S -o $@ $<
 
 gen/gbcompo.c:	tilemap/gbcompo.png | gen/
-	$(PNG2ASSET) $< -map -noflip -c $@ 
+	$(PNG2ASSET) $< -b 1 -map -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(SPRITEDIR)/%.png | gen/
 	$(PNG2ASSET) $< -spr8x8 -keep_palette_order -keep_duplicate_tiles -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(MAPDIR)/%.png | gen/
-	$(PNG2ASSET) $< -map -keep_palette_order -noflip -c $@ 
+	$(PNG2ASSET) $< -b 1 -map -keep_palette_order -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(LEVELDIR)/%.png | gen/
 	$(PNG2ASSET) $< -map -source_tileset tilemap/tileset.png -noflip -c $@ 
@@ -93,6 +93,9 @@ clean:
 
 run: build/$(PROJECTNAME).gb
 	$(JAVA) -jar $(EMULICIOUS) build/$(PROJECTNAME).gb
+
+usage: build/$(PROJECTNAME).gb
+	~/tools/romusage build/$(PROJECTNAME).ihx -g
 
 # '-include' will add in our .d files without erroring if one does not exist
 -include $(DFILES)
