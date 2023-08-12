@@ -11,7 +11,7 @@ uint8_t stepTimer;
 void stateInitSplash() {
     releaseAllBkgGfx();
     splashBkgBaseTile = claimBkgGfx(gbcompo_TILE_COUNT, gbcompo_tiles);
-    set_bkg_tiles(0, 0, 20, 18, gbcompo_map);
+    set_bkg_based_tiles(0, 0, 20, 18, gbcompo_map, splashBkgBaseTile);
 
     BGP_REG = DMG_PALETTE(DMG_WHITE, DMG_WHITE, DMG_WHITE, DMG_WHITE);
     

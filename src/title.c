@@ -2,8 +2,10 @@
 #include "ui.h"
 #include "gen/title-screen.h"
 
+void actionNewGame();
+
 const MenuItem mainMenuItems[] = {
-    {.description = "New game", .action = NULL},
+    {.description = "New game", .action = actionNewGame},
     {.description = "Load game", .action = NULL},
     // Credits?
 };
@@ -22,7 +24,7 @@ void stateInitTitle() {
 
     releaseAllBkgGfx();
     titleScreenTileBase = claimBkgGfx(title_screen_TILE_COUNT, title_screen_tiles);
-    set_bkg_tiles(0, 0, 20, 18, title_screen_map);
+    set_bkg_based_tiles(0, 0, 20, 18, title_screen_map, titleScreenTileBase);
 
     initUi();
     renderMenu(&mainMenu);
@@ -33,5 +35,9 @@ void stateInitTitle() {
 
 void stateUpdateTitle() {
     updateMenu(&mainMenu);
+}
+
+void actionNewGame() {
+    switchToState(STATE_INTRO);
 }
 

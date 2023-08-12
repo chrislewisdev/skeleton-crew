@@ -54,16 +54,16 @@ $(OBJDIR)/save.o:	$(SRCDIR)/save.c
 $(OBJDIR)/%.o:	$(SRCDIR)/%.c $(PNG_CSOURCES)
 	$(LCC) $(LCCFLAGS) -Wf-MMD -c -o $@ $<
 
-$(OBJDIR)/%.o:	$(GENDIR)/%.c
+$(OBJDIR)/%.o:	$(GENDIR)/%.c | $(OBJDIR)/
 	$(LCC) $(LCCFLAGS) -c -o $@ $<
 
 # Compile .s assembly files in "src/" to .o object files
-$(OBJDIR)/%.o:	$(SRCDIR)/%.s
+$(OBJDIR)/%.o:	$(SRCDIR)/%.s | $(OBJDIR)/
 	$(LCC) $(LCCFLAGS) -c -o $@ $<
 
 # If needed, compile .c files in "src/" to .s assembly files
 # (not required if .c is compiled directly to .o)
-$(OBJDIR)/%.s:	$(SRCDIR)/%.c
+$(OBJDIR)/%.s:	$(SRCDIR)/%.c | $(OBJDIR)/
 	$(LCC) $(LCCFLAGS) -S -o $@ $<
 
 gen/gbcompo.c:	tilemap/gbcompo.png | gen/

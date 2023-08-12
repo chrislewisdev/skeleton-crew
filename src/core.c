@@ -10,7 +10,7 @@ void (*currentStateCleanup)() = NULL;
 
 uint8_t input, previousInput;
 
-uint8_t gfxTileOffset = 0;
+uint8_t gfxTileOffset = 1;
 uint8_t objTileOffset = 0;
 uint8_t spriteOffset = 0;
 
@@ -46,7 +46,7 @@ inline uint8_t claimBkgGfxRaw(uint8_t numTiles) {
 }
 
 inline void releaseAllBkgGfx() {
-    gfxTileOffset = 0;
+    gfxTileOffset = 1;
 }
 
 inline uint8_t claimObjGfx(uint8_t numTiles, const uint8_t *data) {

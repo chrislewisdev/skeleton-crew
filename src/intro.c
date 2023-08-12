@@ -1,17 +1,29 @@
+#include <gb/metasprites.h>
 #include "core.h"
-#include "gen/intro-screen.h"
+#include "ui.h"
 
-uint8_t introScreenTileBase;
+const char* introText = \
+"Tired of being treated like\n\
+second-class citizens,\n\
+four skeletons band together\n\
+to show their demon boss\n\
+just how strong they can be.\n\n\
+Guide them through the dungeon\n\
+in their quest for equality!\n\n\
+Press A to start";
 
 void stateInitIntro() {
     HIDE_BKG;
+    HIDE_SPRITES;
     releaseAllBkgGfx();
-    introScreenTileBase = claimBkgGfx(intro_screen_TILE_COUNT, intro_screen_tiles);
-    set_bkg_tiles(0, 0, 20, 18, intro_screen_map);
+    fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0x00u);
+    renderText(1, 1, introText);
     SHOW_BKG;
 }
 
 void stateUpdateIntro() {
-
+    if (KEYPRESSED(J_A)) {
+        switchToState(STATE_OUTRO);
+    }
 }
 

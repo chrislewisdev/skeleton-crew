@@ -2,6 +2,7 @@
 #include "core.h"
 #include "splash.h"
 #include "title.h"
+#include "intro.h"
 
 void main() {
     switchToState(STATE_SPLASH);
@@ -15,6 +16,8 @@ void main() {
             stateUpdateSplash();
         } else if (appState == STATE_TITLE) {
             stateUpdateTitle();
+        } else if (appState == STATE_INTRO) {
+            stateUpdateIntro();
         }
     }
 }
