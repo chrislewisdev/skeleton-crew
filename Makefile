@@ -76,7 +76,7 @@ $(GENDIR)/%.c:	$(MAPDIR)/%.png | gen/
 	$(PNG2ASSET) $< -b 1 -map -keep_palette_order -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(LEVELDIR)/%.png | gen/
-	$(PNG2ASSET) $< -map -source_tileset tilemap/tileset.png -noflip -c $@ 
+	$(PNG2ASSET) $< -map -source_tileset tiled/metatiles.png -noflip -c $@ 
 
 # Link the compiled object files into a .gb ROM file
 $(BINS):	$(OBJS)

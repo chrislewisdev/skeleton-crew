@@ -23,7 +23,7 @@ void stateInitIntro() {
 
 void stateUpdateIntro() {
     if (KEYPRESSED(J_A)) {
-        switchToState(STATE_OUTRO);
+        switchToState(STATE_EXPLORE);
     }
 }
 

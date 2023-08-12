@@ -30,6 +30,7 @@ inline void releaseAllBkgGfx();
 inline uint8_t claimObjGfx(uint8_t numTiles, const uint8_t *data);
 inline void releaseAllObjGfx();
 inline uint8_t claimSprite();
+inline uint8_t claimSprites(uint8_t numSprites);
 inline void releaseAllSprites();
 
 #endif

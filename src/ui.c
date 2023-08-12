@@ -40,7 +40,8 @@ inline void render9slice(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
 }
 
 inline void renderText(uint8_t x, uint8_t y, const char *text) {
-    // TODO: Work out how to utilise bkg gfx better...
+    // TODO: We should pre-render and re-use common text where appropriate
+    // (e.g. menus) - not sure how to do this yet
     uint8_t tilesUsed = vwf_draw_text(x, y, gfxTileOffset, text);
     claimBkgGfxRaw(tilesUsed);
 }

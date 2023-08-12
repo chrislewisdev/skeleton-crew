@@ -3,6 +3,7 @@
 #include "title.h"
 #include "intro.h"
 #include "outro.h"
+#include "explore.h"
 
 // Public variables
 AppState appState = STATE_SPLASH;
@@ -27,6 +28,8 @@ void switchToState(AppState targetState) {
         stateInitIntro();
     } else if (targetState == STATE_OUTRO) {
         stateInitOutro();
+    } else if (targetState == STATE_EXPLORE) {
+        stateInitExplore();
     }
 
     appState = targetState;
@@ -62,6 +65,12 @@ inline void releaseAllObjGfx() {
 
 inline uint8_t claimSprite() {
     return spriteOffset++;
+}
+
+inline uint8_t claimSprites(uint8_t numSprites) {
+    uint8_t baseSprite = spriteOffset;
+    spriteOffset += numSprites;
+    return baseSprite;
 }
 
 inline void releaseAllSprites() {
