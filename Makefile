@@ -70,7 +70,7 @@ gen/gbcompo.c:	tilemap/gbcompo.png | gen/
 	$(PNG2ASSET) $< -b 1 -map -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(SPRITEDIR)/%.png | gen/
-	$(PNG2ASSET) $< -spr8x8 -keep_palette_order -keep_duplicate_tiles -noflip -c $@ 
+	$(PNG2ASSET) $< -spr8x8 -px 0 -py 0 -keep_palette_order -keep_duplicate_tiles -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(MAPDIR)/%.png | gen/
 	$(PNG2ASSET) $< -b 1 -map -keep_palette_order -noflip -c $@ 
