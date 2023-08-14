@@ -69,6 +69,9 @@ $(OBJDIR)/%.s:	$(SRCDIR)/%.c | $(OBJDIR)/
 gen/gbcompo.c:	tilemap/gbcompo.png | gen/
 	$(PNG2ASSET) $< -b 1 -map -noflip -c $@ 
 
+gen/zymie.c: sprite/zymie.png | gen/
+	$(PNG2ASSET) $< -spr8x8 -sw 16 -sh 16 -px 0 -py 0 -keep_palette_order -noflip -c $@ 
+
 $(GENDIR)/%.c:	$(SPRITEDIR)/%.png | gen/
 	$(PNG2ASSET) $< -spr8x8 -px 0 -py 0 -keep_palette_order -keep_duplicate_tiles -noflip -c $@ 
 
