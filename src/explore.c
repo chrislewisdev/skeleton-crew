@@ -19,10 +19,10 @@ typedef enum Facing { F_UP, F_DOWN, F_LEFT, F_RIGHT } Facing;
 
 uint8_t tilesBase;
 uint8_t zymieBaseTile, zymieBaseSprite;
-Point player = {.x = 3, .y = 2};
+Point player = {.x = 5, .y = 4};
 Point metaCamera = {.x = 0, .y = 2};
-Bounds viewport = {.left = 0, .right = META_SCREEN_WIDTH - 1, .top = 0, .bottom = META_SCREEN_HEIGHT - 1};
-Bounds renderedMap = {.left = 0, .right = META_SCREEN_WIDTH - 1, .top = 0, .bottom = META_SCREEN_HEIGHT - 1};
+Bounds viewport = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = META_SCREEN_HEIGHT};
+Bounds renderedMap = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = META_SCREEN_HEIGHT};
 Facing playerFacing = F_DOWN;
 
 inline void renderMetamap(uint8_t, uint8_t);
@@ -34,6 +34,9 @@ void updateCamera();
 void move(Facing direction);
 
 void stateInitExplore() {
+    HIDE_BKG;
+    HIDE_SPRITES;
+
     releaseAllBkgGfx();
     releaseAllObjGfx();
     releaseAllSprites();
@@ -42,9 +45,9 @@ void stateInitExplore() {
     zymieBaseTile = claimObjGfx(zymie_TILE_COUNT, zymie_tiles);
     zymieBaseSprite = claimSprites(4);
 
-//    updateCamera();
     renderPlayer();
     renderMetamap(0, 0);
+    move_bkg(8, 8);
     
     SHOW_BKG;
     SHOW_SPRITES;
@@ -56,25 +59,25 @@ void stateUpdateExplore() {
         if (!isTileSolid(player.x, player.y - 1)) {
             move(F_UP);
         }
-        //renderPlayer();
+        renderPlayer();
     } else if (KEYPRESSED(J_DOWN)) {
         playerFacing = F_DOWN;
         if (!isTileSolid(player.x, player.y + 1)) {
             move(F_DOWN);
         }
-        //renderPlayer();
+        renderPlayer();
     } else if (KEYPRESSED(J_LEFT)) {
         playerFacing = F_LEFT;
         if (!isTileSolid(player.x - 1, player.y)) {
             move(F_LEFT);
         }
-        //renderPlayer();
+        renderPlayer();
     } else if (KEYPRESSED(J_RIGHT)) {
         playerFacing = F_RIGHT;
         if (!isTileSolid(player.x + 1, player.y)) {
             move(F_RIGHT);
         }
-        //renderPlayer();
+        renderPlayer();
     }
 }
 
@@ -120,42 +123,7 @@ void move(Facing direction) {
         else                                            viewport.right++;
         renderColumn(viewport.right, viewport.top, renderedMap.right, renderedMap.top);
     }
-    move_bkg(viewport.left * 16, viewport.top * 16);
-    //updateCamera();
-}
-
-void updateCamera() {
-    Point old = {.x = metaCamera.x, .y = metaCamera.y};
-
-    if (player.x < 5)
-        metaCamera.x = 0;
-    else
-        metaCamera.x = player.x - 5;
-    if (player.y < 4)
-        metaCamera.y = 0;
-    else
-        metaCamera.y = player.y - 4;
-
-    //scroll_bkg((metaCamera.x - old.x) * 16, (metaCamera.y - old.y) * 16);
-
-    // Load in more of the tilemap as necessary
-    // TODO: Need to check viewport edges against RELATIVE camera position, not metacamera
-    //if (metaCamera.x < viewportEdgeLeft) {
-    //    renderColumn(viewportEdgeLeft, viewportEdgeTop, metaCamera.x, metaCamera.y);
-    //    viewportEdgeLeft = metaCamera.x;
-    //}
-    //if (metaCamera.x + META_SCREEN_WIDTH > viewportEdgeRight) {
-    //    renderColumn(viewportEdgeRight, viewportEdgeTop, metaCamera.x, metaCamera.y);
-    //    viewportEdgeRight = metaCamera.x + META_SCREEN_WIDTH;
-    //}
-    //if (metaCamera.y < viewportEdgeTop) {
-    //    renderRow(viewportEdgeLeft, viewportEdgeTop, metaCamera.x, metaCamera.y);
-    //    viewportEdgeTop = metaCamera.y;
-    //}
-    //if (metaCamera.y + META_SCREEN_HEIGHT > viewportEdgeBottom) {
-    //    renderRow(viewportEdgeLeft, viewportEdgeBottom, metaCamera.x, metaCamera.y);
-    //    viewportEdgeBottom = metaCamera.y + META_SCREEN_HEIGHT;
-    //}
+    move_bkg(viewport.left * 16 + 8, viewport.top * 16 + 8);
 }
 
 inline uint8_t getMetaTile(uint8_t x, uint8_t y) {
@@ -172,8 +140,8 @@ inline void renderPlayer() {
     if (playerFacing == F_UP) frameId = 3;
     else if (playerFacing == F_LEFT || playerFacing == F_RIGHT) frameId = 6;
 
-    uint8_t x = (player.x/* - metaCamera.x*/) * 16 + 16;
-    uint8_t y = (player.y/* - metaCamera.y*/) * 16 + 24;
+    uint8_t x = 5 * 16 + 8;
+    uint8_t y = 4 * 16 + 16;
 
     if (playerFacing == F_LEFT)
         move_metasprite_vflip(zymie_metasprites[frameId], zymieBaseTile, zymieBaseSprite, x, y);
@@ -189,21 +157,21 @@ inline void renderMetatile(uint8_t x, uint8_t y, uint8_t tileId) {
 }
 
 inline void renderColumn(uint8_t xFrom, uint8_t yFrom, uint8_t bx, uint8_t by) {
-    for (uint8_t y = 0; y < META_SCREEN_HEIGHT; y++) {
+    for (uint8_t y = 0; y <= META_SCREEN_HEIGHT; y++) {
         renderMetatile(xFrom, (y + yFrom) % 16, getMetaTile(bx, y + by));
     }
 }
 
 inline void renderRow(uint8_t xFrom, uint8_t yFrom, uint8_t bx, uint8_t by) {
-    for (uint8_t x = 0; x < META_SCREEN_WIDTH; x++) {
+    for (uint8_t x = 0; x <= META_SCREEN_WIDTH; x++) {
         renderMetatile((x + xFrom) % 16, yFrom, getMetaTile(x + bx, by));
     }
 }
 
 // TODO: Should probably rename this function since it is only intended to be used for an initial render
 inline void renderMetamap(uint8_t bx, uint8_t by) {
-    for (uint8_t x = 0; x < META_SCREEN_WIDTH; x++) {
-        for (uint8_t y = 0; y < META_SCREEN_HEIGHT; y++) {
+    for (uint8_t x = 0; x <= META_SCREEN_WIDTH; x++) {
+        for (uint8_t y = 0; y <= META_SCREEN_HEIGHT; y++) {
             renderMetatile(x, y, getMetaTile(x + bx, y + by));
         }
     }
