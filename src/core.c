@@ -4,6 +4,7 @@
 #include "intro.h"
 #include "outro.h"
 #include "explore.h"
+#include "credits.h"
 
 // Public variables
 AppState appState = STATE_SPLASH;
@@ -30,6 +31,8 @@ void switchToState(AppState targetState) {
         stateInitOutro();
     } else if (targetState == STATE_EXPLORE) {
         stateInitExplore();
+    } else if (targetState == STATE_CREDITS) {
+        stateInitCredits();
     }
 
     appState = targetState;

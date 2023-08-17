@@ -4,6 +4,8 @@
 #include "title.h"
 #include "intro.h"
 #include "explore.h"
+#include "credits.h"
+#include "hUGEDriver.h"
 
 void main() {
     NR52_REG = 0x80;
@@ -27,6 +29,8 @@ void main() {
             stateUpdateIntro();
         } else if (appState == STATE_EXPLORE) {
             stateUpdateExplore();
+        } else if (appState == STATE_CREDITS) {
+            stateUpdateCredits();
         }
     }
 }
