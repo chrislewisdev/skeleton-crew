@@ -15,6 +15,7 @@ typedef struct Menu {
 } Menu;
 
 void initUi();
+inline void render9slice(uint8_t x, uint8_t y, uint8_t width, uint8_t height); 
 inline void renderText(uint8_t x, uint8_t y, const char *text);
 inline void renderMenu(Menu *menu);
 void updateMenu(Menu *menu);

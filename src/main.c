@@ -5,6 +5,7 @@
 #include "intro.h"
 #include "explore.h"
 #include "credits.h"
+#include "battle.h"
 #include "hUGEDriver.h"
 
 void main() {
@@ -31,6 +32,8 @@ void main() {
             stateUpdateExplore();
         } else if (appState == STATE_CREDITS) {
             stateUpdateCredits();
+        } else if (appState == STATE_BATTLE) {
+            stateUpdateBattle();
         }
     }
 }

@@ -41,7 +41,9 @@ void stateUpdateTitle() {
 }
 
 void actionNewGame() {
-    switchToState(STATE_INTRO);
+    //switchToState(STATE_INTRO);
+    // Temp code: go straight into battle for testing
+    switchToState(STATE_BATTLE);
 }
 
 void actionCredits() {
