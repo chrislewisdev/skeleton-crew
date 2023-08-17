@@ -24,7 +24,7 @@ typedef struct Character {
     uint8_t spAtk, spDef;
     uint8_t affinities[4];
     uint8_t skills[4];
-    metasprite_t *metasprite;
+    const metasprite_t *metasprite;
 } Character;
 
 typedef struct Skill {
@@ -35,15 +35,8 @@ typedef struct Skill {
 
 inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePower, Element element);
 
-Skill skills[] = {
-    {.id = 0, .name = "Fireball"},
-    {.id = 1, .name = "Gust"},
-    {.id = 2, .name = "Rain"},
-    {.id = 3, .name = "Heal"},
-    {.id = 4, .name = "Blast"},
-    {.id = 5, .name = "Cyclone"},
-    {.id = 6, .name = "Downpour"},
-};
+extern const Skill skills[7];
+extern Character party[4];
 
 #endif
 

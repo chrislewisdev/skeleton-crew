@@ -8,6 +8,8 @@
 #include "battle.h"
 #include "hUGEDriver.h"
 
+uint8_t playMusic = 0;
+
 void main() {
     NR52_REG = 0x80;
     NR51_REG = 0xFF;
@@ -17,7 +19,7 @@ void main() {
     while (1) {
         wait_vbl_done();
 
-        hUGE_dosound();
+        if (playMusic) hUGE_dosound();
 
         previousInput = input;
         input = joypad();

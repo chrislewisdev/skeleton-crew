@@ -1,8 +1,14 @@
 #include "core.h"
 #include "ui.h"
+#include "rpg.h"
 #include "gen/battle-background.h"
+#include "gen/zyme-battle.h"
+#include "gen/ivan-battle.h"
+#include "gen/olaf-battle.h"
+#include "gen/pierre-battle.h"
 
 void renderStatusDisplay();
+void renderParty();
 
 MenuItem primaryMenuItems[] = {
     {.description = "Fight", .action = NULL},
@@ -19,6 +25,7 @@ Menu primaryMenu = {
 };
 
 uint8_t battleBackgroundBaseTile;
+uint8_t baseTiles[4];
 
 void stateInitBattle() {
     HIDE_BKG;
@@ -35,8 +42,19 @@ void stateInitBattle() {
     battleBackgroundBaseTile = claimBkgGfx(battle_background_TILE_COUNT, battle_background_tiles);
     set_bkg_based_tiles(0, 0, 20, 12, battle_background_map, battleBackgroundBaseTile);
 
+    baseTiles[0] = claimObjGfx(zyme_battle_TILE_COUNT, zyme_battle_tiles);
+    baseTiles[1] = claimObjGfx(ivan_battle_TILE_COUNT, ivan_battle_tiles);
+    baseTiles[2] = claimObjGfx(olaf_battle_TILE_COUNT, olaf_battle_tiles);
+    baseTiles[3] = claimObjGfx(pierre_battle_TILE_COUNT, pierre_battle_tiles);
+    // Temporary-ish - set the metasprite pointers for player party
+    party[0].metasprite = zyme_battle_metasprites[0];
+    party[1].metasprite = ivan_battle_metasprites[0];
+    party[2].metasprite = olaf_battle_metasprites[0];
+    party[3].metasprite = pierre_battle_metasprites[0];
+
     renderStatusDisplay();
     renderMenu(&primaryMenu);
+    renderParty();
 
     SHOW_BKG;
     SHOW_SPRITES;
@@ -52,5 +70,12 @@ void renderStatusDisplay() {
     renderText(1, 15, "Olaf:"); renderText(5, 15, "35/35");
     renderText(1, 16, "Pierre:"); renderText(5, 16, "14/63");
     render9slice(0, 12, 9, 6);
+}
+
+void renderParty() {
+    for (uint8_t i = 0; i < 4; i++) {
+        uint8_t baseSprite = claimSprites(4);
+        move_metasprite(party[i].metasprite, baseTiles[i], baseSprite, 36, 32 + i * 20);
+    }
 }
 

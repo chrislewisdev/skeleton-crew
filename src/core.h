@@ -22,6 +22,7 @@ extern void (*currentStateCleanup)();
 
 extern uint8_t input, previousInput;
 extern uint8_t gfxTileOffset, objTileOffset, spriteOffset;
+extern uint8_t playMusic;
 
 void switchToState(AppState targetState);
 

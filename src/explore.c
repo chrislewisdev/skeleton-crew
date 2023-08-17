@@ -53,6 +53,7 @@ void stateInitExplore() {
     move_bkg(8, 8);
 
     hUGE_init(&dungeon_stroll);
+    playMusic = TRUE;
     
     SHOW_BKG;
     SHOW_SPRITES;
