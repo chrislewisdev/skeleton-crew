@@ -1,4 +1,5 @@
 #include "core.h"
+#include "hUGEDriver.h"
 #include "gen/tiles.h"
 #include "gen/metamap.h"
 #include "gen/zymie.h"
@@ -16,6 +17,8 @@ typedef struct Point { uint8_t x; uint8_t y; } Point;
 typedef struct Bounds { uint8_t left, right, top, bottom; } Bounds;
 
 typedef enum Facing { F_UP, F_DOWN, F_LEFT, F_RIGHT } Facing;
+
+extern const hUGESong_t dungeon_stroll;
 
 uint8_t tilesBase;
 uint8_t zymieBaseTile, zymieBaseSprite;
@@ -48,6 +51,8 @@ void stateInitExplore() {
     renderPlayer();
     renderMetamap(0, 0);
     move_bkg(8, 8);
+
+    hUGE_init(&dungeon_stroll);
     
     SHOW_BKG;
     SHOW_SPRITES;

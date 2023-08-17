@@ -83,7 +83,7 @@ $(GENDIR)/%.c:	$(LEVELDIR)/%.png | gen/
 
 # Link the compiled object files into a .gb ROM file
 $(BINS):	$(OBJS)
-	$(LCC) $(LCCFLAGS) -Wm-yt0x1B -Wl-yo2 -Wl-ya4 -o $(BINS) $(OBJS)
+	$(LCC) $(LCCFLAGS) -Wm-yt0x1B -Wl-yo4 -Wl-ya4 -Wl-m -o $(BINS) $(OBJS) lib/hUGEDriver.o
 
 $(OBJDIR)/:
 	mkdir -p $(OBJDIR)
@@ -98,7 +98,7 @@ run: build/$(PROJECTNAME).gb
 	$(JAVA) -jar $(EMULICIOUS) build/$(PROJECTNAME).gb
 
 usage: build/$(PROJECTNAME).gb
-	~/tools/romusage build/$(PROJECTNAME).ihx -g
+	~/tools/romusage build/$(PROJECTNAME).map -g
 
 # '-include' will add in our .d files without erroring if one does not exist
 -include $(DFILES)
