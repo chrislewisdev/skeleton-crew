@@ -1,4 +1,5 @@
 #include <gb/gb.h>
+#include <rand.h>
 #include "core.h"
 #include "splash.h"
 #include "title.h"
@@ -11,9 +12,12 @@
 uint8_t playMusic = 0;
 
 void main() {
+    // Enable sound
     NR52_REG = 0x80;
     NR51_REG = 0xFF;
     NR50_REG = 0x77;
+
+    initrand(15);
 
     switchToState(STATE_SPLASH);
     while (1) {

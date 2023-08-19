@@ -14,12 +14,13 @@ void (*currentStateCleanup)() = NULL;
 uint8_t input, previousInput;
 
 uint8_t gfxTileOffset = 1;
-uint8_t objTileOffset = 0;
+uint8_t objTileOffset = 1;
 uint8_t spriteOffset = 0;
 
 void switchToState(AppState targetState) {
     if (currentStateCleanup != NULL) {
         currentStateCleanup();
+        currentStateCleanup = NULL;
     }
 
     if (targetState == STATE_SPLASH) {
@@ -36,6 +37,7 @@ void switchToState(AppState targetState) {
         stateInitCredits();
     } else if (targetState == STATE_BATTLE) {
         stateInitBattle();
+        currentStateCleanup = stateCleanupBattle;
     }
 
     appState = targetState;
@@ -66,7 +68,7 @@ inline uint8_t claimObjGfx(uint8_t numTiles, const uint8_t *data) {
 }
 
 inline void releaseAllObjGfx() {
-    objTileOffset = 0;
+    objTileOffset = 1;
 }
 
 inline uint8_t claimSprite() {

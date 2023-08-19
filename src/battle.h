@@ -3,6 +3,7 @@
 
 void stateInitBattle();
 void stateUpdateBattle();
+void stateCleanupBattle();
 
 #endif
 
