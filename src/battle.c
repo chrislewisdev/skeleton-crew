@@ -1,11 +1,15 @@
 #include "core.h"
 #include "ui.h"
 #include "rpg.h"
+#include "hUGEDriver.h"
 #include "gen/battle-background.h"
 #include "gen/zyme-battle.h"
 #include "gen/ivan-battle.h"
 #include "gen/olaf-battle.h"
 #include "gen/pierre-battle.h"
+
+extern hUGESong_t exchange_your_wits;
+BANKREF_EXTERN(exchange_your_wits)
 
 void renderStatusDisplay();
 void renderParty();
@@ -56,6 +60,11 @@ void stateInitBattle() {
     renderMenu(&primaryMenu);
     renderParty();
 
+    SWITCH_ROM(BANK(exchange_your_wits));
+    hUGE_init(&exchange_your_wits);
+    playMusic = TRUE;
+    //SWITCH_ROM(1);
+
     SHOW_BKG;
     SHOW_SPRITES;
 }
@@ -74,6 +83,7 @@ void renderStatusDisplay() {
 
 void renderParty() {
     for (uint8_t i = 0; i < 4; i++) {
+        // TODO: Flesh this out properly!
         uint8_t baseSprite = claimSprites(4);
         move_metasprite(party[i].metasprite, baseTiles[i], baseSprite, 36, 32 + i * 20);
     }
