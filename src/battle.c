@@ -19,6 +19,12 @@ typedef struct CharacterDisplayInfo {
     const metasprite_t* metasprite;
 } CharacterDisplayInfo;
 
+typedef enum UiMode {
+    PRIMARY,
+    SUB,
+    TARGETING
+} UiMode;
+
 BANKREF_EXTERN(exchange_your_wits)
 extern hUGESong_t exchange_your_wits;
 
@@ -26,9 +32,11 @@ void renderStatusDisplay();
 void renderParty();
 void generateEnemyParty();
 void actionRun();
+void actionFight();
+void updateTargeting();
 
 MenuItem primaryMenuItems[] = {
-    {.description = "Fight", .action = NULL},
+    {.description = "Fight", .action = actionFight},
     {.description = "Skill", .action = NULL},
     {.description = "Item", .action = NULL},
     {.description = "Run", .action = actionRun},
@@ -47,6 +55,21 @@ Character enemyParty[4];
 // Might be able to unify these arrays at some point...
 CharacterDisplayInfo partyDisplayInfo[4];
 CharacterDisplayInfo enemyDisplayInfo[4];
+UiMode uiMode = PRIMARY;
+uint8_t targetingIndex = 0;
+Character* turnOrder[8] = {
+    &party[0],
+    &enemyParty[0],
+    &party[1],
+    &enemyParty[1],
+    &party[2],
+    &enemyParty[2],
+    &party[3],
+    &enemyParty[3]
+};
+uint8_t turnOrderSize = 8;
+uint8_t turnOrderIndex = 0;
+Character* currentTurnCharacter = &party[0];
 
 void initCharacterDisplayInfo() {
     partyDisplayInfo[0].metasprite = zyme_battle_metasprites[0];
@@ -113,7 +136,11 @@ void stateInitBattle() {
 }
 
 void stateUpdateBattle() {
-    updateMenu(&primaryMenu);
+    if (uiMode == PRIMARY) {
+        updateMenu(&primaryMenu);
+    } else if (uiMode == TARGETING) {
+        updateTargeting();
+    }
 }
 
 void stateCleanupBattle() {
@@ -125,6 +152,10 @@ void stateCleanupBattle() {
 
 void actionRun() {
     queueStateSwitch(STATE_EXPLORE);
+}
+
+void actionFight() {
+    uiMode = TARGETING;
 }
 
 void generateEnemyParty() {
@@ -179,4 +210,81 @@ void renderParty() {
         );
     }
 }
+
+void updateTargeting() {
+    uint8_t minAliveEnemyIndex = 0;
+    uint8_t maxAliveEnemyIndex = enemyPartySize;
+
+    while (enemyParty[minAliveEnemyIndex].hp == 0) {
+        minAliveEnemyIndex++;
+    }
+    while (enemyParty[maxAliveEnemyIndex].hp == 0) {
+        maxAliveEnemyIndex--;
+    }
+
+    if (targetingIndex < minAliveEnemyIndex) targetingIndex = minAliveEnemyIndex;
+    if (targetingIndex > maxAliveEnemyIndex) targetingIndex = maxAliveEnemyIndex;
+
+    while (enemyParty[targetingIndex].hp == 0) {
+        targetingIndex--;
+    }
+
+    if (KEYPRESSED(J_UP) && targetingIndex > minAliveEnemyIndex) {
+        do {
+            targetingIndex--;
+        } while (enemyParty[targetingIndex].hp == 0 && targetingIndex > 0);
+    } else if (KEYPRESSED(J_DOWN) && targetingIndex < maxAliveEnemyIndex) {
+        do {
+            targetingIndex++;
+        } while (enemyParty[targetingIndex].hp == 0 && targetingIndex < 3);
+    }
+
+    if (KEYPRESSED(J_A)) {
+        //currentActionTarget = &enemyParty[targetingIndex];
+        //queuedAction();
+        //playerHasActed = TRUE;
+        //menuState = INITIAL;
+    } else if (KEYPRESSED(J_B)) {
+        uiMode = PRIMARY;
+    }
+
+    renderCursor(100, 36 + targetingIndex * 18);
+}
+
+//void onTurnEnd() {
+//    // Check if battle is over:
+//    // enemy party is all dead
+//    // OR player party is defeated
+//
+//    do {
+//        turnOrderIndex++;
+//        if (turnOrderIndex >= turnOrderSize) {
+//            turnOrderIndex = 0;
+//        }
+//    } while (turnOrder[turnOrderIndex]->currentHp == 0);
+//    currentTurnCharacter = turnOrder[turnOrderIndex];
+//    currentActionTarget = &enemyParty[0];
+//
+//    //renderCharacters();
+//}
+//
+//void updateTurn() {
+//    if (currentTurnCharacter->isAiControlled) {
+//        // Perform an AI action
+//        if (aiActionTimer == 0) {
+//            currentActionTarget = &playerParty[rand() % 4];
+//            actionAttack();
+//            onTurnEnd();
+//            aiActionTimer = AI_ACTION_DURATION;
+//        } else {
+//            aiActionTimer--;
+//        }
+//    } else {
+//        // Wait for the player to act
+//        if (playerHasActed) {
+//            onTurnEnd();
+//            playerHasActed = FALSE;
+//        }
+//    }
+//}
 

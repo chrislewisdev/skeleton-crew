@@ -14,6 +14,7 @@ void initUi() {
     cursorSprite = claimSprite();
 
     set_sprite_tile(cursorSprite, cursorTile);
+    set_sprite_prop(cursorSprite, 0);
 
     vwf_set_destination(VWF_RENDER_BKG);
     vwf_load_font(0, vwf_font, (UBYTE)&__bank_vwf_font);
@@ -75,6 +76,10 @@ void renderMenu(Menu *menu) {
 //        }
 //    }
 //}
+
+inline void renderCursor(uint8_t x, uint8_t y) {
+    move_sprite(cursorSprite, x, y);
+}
 
 void updateMenu(Menu* menu) {
     // Cursor controls
