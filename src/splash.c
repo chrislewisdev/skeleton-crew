@@ -30,7 +30,7 @@ void stateUpdateSplash() {
         } else if (step == 3) {
             BGP_REG = DMG_PALETTE(DMG_WHITE, DMG_LITE_GRAY, DMG_DARK_GRAY, DMG_BLACK);
         } else if (step == 6) {
-            switchToState(STATE_TITLE);
+            queueStateSwitch(STATE_TITLE);
         }
         step++;
         stepTimer = STEP_DURATION;

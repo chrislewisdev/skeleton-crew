@@ -43,12 +43,12 @@ void stateUpdateTitle() {
 
 void actionNewGame() {
     initrand(DIV_REG);
-    //switchToState(STATE_INTRO);
+    queueStateSwitch(STATE_INTRO);
     // Temp code: go straight into battle for testing
-    switchToState(STATE_BATTLE);
+    //switchToState(STATE_BATTLE);
 }
 
 void actionCredits() {
-    switchToState(STATE_CREDITS);
+    queueStateSwitch(STATE_CREDITS);
 }
 

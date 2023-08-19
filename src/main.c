@@ -19,28 +19,18 @@ void main() {
 
     initrand(15);
 
-    switchToState(STATE_SPLASH);
+    queueStateSwitch(STATE_SPLASH);
     while (1) {
         wait_vbl_done();
+
+        checkStateSwitch();
 
         if (playMusic) hUGE_dosound();
 
         previousInput = input;
         input = joypad();
 
-        if (appState == STATE_SPLASH) {
-            stateUpdateSplash();
-        } else if (appState == STATE_TITLE) {
-            stateUpdateTitle();
-        } else if (appState == STATE_INTRO) {
-            stateUpdateIntro();
-        } else if (appState == STATE_EXPLORE) {
-            stateUpdateExplore();
-        } else if (appState == STATE_CREDITS) {
-            stateUpdateCredits();
-        } else if (appState == STATE_BATTLE) {
-            stateUpdateBattle();
-        }
+        currentStateUpdate();
     }
 }
 

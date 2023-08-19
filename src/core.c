@@ -8,7 +8,8 @@
 #include "battle.h"
 
 // Public variables
-AppState appState = STATE_SPLASH;
+AppState appState = STATE_NONE, queuedTargetState = STATE_NONE;
+void (*currentStateUpdate)() = NULL;
 void (*currentStateCleanup)() = NULL;
 
 uint8_t input, previousInput;
@@ -17,30 +18,43 @@ uint8_t gfxTileOffset = 1;
 uint8_t objTileOffset = 1;
 uint8_t spriteOffset = 0;
 
-void switchToState(AppState targetState) {
+inline void queueStateSwitch(AppState targetState) {
+    queuedTargetState = targetState;
+}
+
+void checkStateSwitch() {
+    if (queuedTargetState == appState) return;
+
     if (currentStateCleanup != NULL) {
         currentStateCleanup();
         currentStateCleanup = NULL;
     }
 
-    if (targetState == STATE_SPLASH) {
+    if (queuedTargetState == STATE_SPLASH) {
         stateInitSplash();
-    } else if (targetState == STATE_TITLE) {
+        currentStateUpdate = stateUpdateSplash;
+    } else if (queuedTargetState == STATE_TITLE) {
         stateInitTitle();
-    } else if (targetState == STATE_INTRO) {
+        currentStateUpdate = stateUpdateTitle;
+    } else if (queuedTargetState == STATE_INTRO) {
         stateInitIntro();
-    } else if (targetState == STATE_OUTRO) {
+        currentStateUpdate = stateUpdateIntro;
+    } else if (queuedTargetState == STATE_OUTRO) {
         stateInitOutro();
-    } else if (targetState == STATE_EXPLORE) {
+        currentStateUpdate = stateUpdateOutro;
+    } else if (queuedTargetState == STATE_EXPLORE) {
         stateInitExplore();
-    } else if (targetState == STATE_CREDITS) {
+        currentStateUpdate = stateUpdateExplore;
+    } else if (queuedTargetState == STATE_CREDITS) {
         stateInitCredits();
-    } else if (targetState == STATE_BATTLE) {
+        currentStateUpdate = stateUpdateCredits;
+    } else if (queuedTargetState == STATE_BATTLE) {
         stateInitBattle();
+        currentStateUpdate = stateUpdateBattle;
         currentStateCleanup = stateCleanupBattle;
     }
 
-    appState = targetState;
+    appState = queuedTargetState;
 }
 
 inline uint8_t claimBkgGfx(uint8_t numTiles, const uint8_t *data) {

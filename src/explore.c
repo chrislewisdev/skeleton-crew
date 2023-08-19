@@ -27,6 +27,7 @@ Point metaCamera = {.x = 0, .y = 2};
 Bounds viewport = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = META_SCREEN_HEIGHT};
 Bounds renderedMap = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = META_SCREEN_HEIGHT};
 Facing playerFacing = F_DOWN;
+uint8_t stepCounter;
 
 inline void renderMetamap(uint8_t, uint8_t);
 inline void renderColumn(uint8_t, uint8_t, uint8_t, uint8_t);
@@ -39,6 +40,8 @@ void move(Facing direction);
 void stateInitExplore() {
     HIDE_BKG;
     HIDE_SPRITES;
+    hide_sprites_range(0, MAX_HARDWARE_SPRITES);
+    SWITCH_ROM(1);
 
     releaseAllBkgGfx();
     releaseAllObjGfx();
@@ -49,14 +52,19 @@ void stateInitExplore() {
     zymieBaseSprite = claimSprites(4);
 
     renderPlayer();
-    renderMetamap(0, 0);
+    renderMetamap(renderedMap.left, renderedMap.top);
     move_bkg(8, 8);
+
+    viewport.left = 0; viewport.right = META_SCREEN_WIDTH;
+    viewport.top = 0; viewport.bottom = META_SCREEN_HEIGHT;
 
     hUGE_init(&dungeon_stroll);
     playMusic = TRUE;
     
     SHOW_BKG;
     SHOW_SPRITES;
+
+    stepCounter = 0;
 }
 
 void stateUpdateExplore() {
@@ -130,6 +138,11 @@ void move(Facing direction) {
         renderColumn(viewport.right, viewport.top, renderedMap.right, renderedMap.top);
     }
     move_bkg(viewport.left * 16 + 8, viewport.top * 16 + 8);
+
+    stepCounter++;
+    if (stepCounter > 5) {
+        queueStateSwitch(STATE_BATTLE);
+    }
 }
 
 inline uint8_t getMetaTile(uint8_t x, uint8_t y) {

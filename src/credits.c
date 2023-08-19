@@ -21,7 +21,7 @@ void stateInitCredits() {
 
 void stateUpdateCredits() {
     if (KEYPRESSED(J_B)) {
-        switchToState(STATE_TITLE);
+        queueStateSwitch(STATE_TITLE);
     }
 }
 

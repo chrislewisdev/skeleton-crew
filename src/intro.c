@@ -23,7 +23,7 @@ void stateInitIntro() {
 
 void stateUpdateIntro() {
     if (KEYPRESSED(J_A)) {
-        switchToState(STATE_EXPLORE);
+        queueStateSwitch(STATE_EXPLORE);
     }
 }
 

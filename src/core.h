@@ -8,6 +8,7 @@
 #define KEYPRESSED(KEY) ((input & KEY) && !(previousInput & KEY))
 
 typedef enum AppState {
+    STATE_NONE,
     STATE_SPLASH,
     STATE_TITLE,
     STATE_INTRO,
@@ -18,13 +19,15 @@ typedef enum AppState {
 } AppState;
 
 extern AppState appState;
+extern void (*currentStateUpdate)();
 extern void (*currentStateCleanup)();
 
 extern uint8_t input, previousInput;
 extern uint8_t gfxTileOffset, objTileOffset, spriteOffset;
 extern uint8_t playMusic;
 
-void switchToState(AppState targetState);
+void queueStateSwitch(AppState targetState);
+void checkStateSwitch();
 
 inline uint8_t claimBkgGfx(uint8_t numTiles, const uint8_t *data);
 inline uint8_t claimBkgGfxRaw(uint8_t numTiles);

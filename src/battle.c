@@ -25,12 +25,13 @@ extern hUGESong_t exchange_your_wits;
 void renderStatusDisplay();
 void renderParty();
 void generateEnemyParty();
+void actionRun();
 
 MenuItem primaryMenuItems[] = {
     {.description = "Fight", .action = NULL},
     {.description = "Skill", .action = NULL},
     {.description = "Item", .action = NULL},
-    {.description = "Run", .action = NULL},
+    {.description = "Run", .action = actionRun},
 };
 Menu primaryMenu = {
     .x = 0, .y = 12,
@@ -88,6 +89,7 @@ void stateInitBattle() {
     releaseAllObjGfx();
     releaseAllSprites();
 
+    move_bkg(0, 0);
     fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0x00u);
 
     initUi();
@@ -121,8 +123,12 @@ void stateCleanupBattle() {
     }
 }
 
+void actionRun() {
+    queueStateSwitch(STATE_EXPLORE);
+}
+
 void generateEnemyParty() {
-    enemyPartySize = 4;
+    enemyPartySize = rand() % 3 + 1;
     for (uint8_t i = 0; i < enemyPartySize; i++) {
         uint8_t enemyId = rand() % ENEMY_TYPE_COUNT;
         enemyParty[i].hp = enemyTypes[enemyId].hp;
