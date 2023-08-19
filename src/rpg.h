@@ -4,7 +4,7 @@
 #include <gb/gb.h>
 #include <gb/metasprites.h>
 
-#define ENEMY_TYPE_COUNT    2
+#define ENEMY_TYPE_COUNT    6
 
 typedef enum Element {
     PHYSICAL,

@@ -1,3 +1,4 @@
+#include <rand.h>
 #include "core.h"
 #include "ui.h"
 #include "gen/title-screen.h"
@@ -41,6 +42,7 @@ void stateUpdateTitle() {
 }
 
 void actionNewGame() {
+    initrand(DIV_REG);
     //switchToState(STATE_INTRO);
     // Temp code: go straight into battle for testing
     switchToState(STATE_BATTLE);
