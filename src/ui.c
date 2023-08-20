@@ -4,12 +4,15 @@
 #include "vwf_font.h"
 #include "gen/ui9slice.h"
 #include "gen/cursor.h"
+#include "gen/numbers.h"
 
 uint8_t baseNineSliceTile;
+uint8_t baseNumbersTile;
 uint8_t cursorTile, cursorSprite;
 
 void initUi() {
     baseNineSliceTile = claimBkgGfx(ui9slice_TILE_COUNT, ui9slice_tiles);
+    baseNumbersTile = claimBkgGfx(numbers_TILE_COUNT, numbers_tiles);
     cursorTile = claimObjGfx(cursor_TILE_COUNT, cursor_tiles);
     cursorSprite = claimSprite();
 
@@ -47,13 +50,13 @@ inline void renderText(uint8_t x, uint8_t y, const char *text) {
     claimBkgGfxRaw(tilesUsed);
 }
 
-//inline void renderNumber(uint8_t x, uint8_t y, uint8_t value) {
-//    uint8_t onesDigit = value % 10;
-//    uint8_t tensDigit = value / 10;
-//
-//    set_bkg_tile_xy(x, y, NUMBERS_TILE_START + tensDigit);
-//    set_bkg_tile_xy(x + 1, y, NUMBERS_TILE_START + onesDigit);
-//}
+inline void renderNumber(uint8_t x, uint8_t y, uint8_t value) {
+    uint8_t onesDigit = value % 10;
+    uint8_t tensDigit = value / 10;
+
+    set_bkg_tile_xy(x, y, baseNumbersTile + tensDigit);
+    set_bkg_tile_xy(x + 1, y, baseNumbersTile + onesDigit);
+}
 
 void renderMenu(Menu *menu) {
     uint8_t x = menu->x;

@@ -38,7 +38,44 @@ EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
     ENEMY("Spider", 7, 3, 1, 1, 0, NONE, NONE, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
 };
 
-Character party[4];
+Character party[4] = {
+    {
+        .isAlly = TRUE,
+        .lvl = 1, .xp = 0,
+        .hp = 35, .maxHp = 35,
+        .atk = 1, .def = 1,
+        .spAtk = 1, .spDef = 1,
+        .affinities = NONE,
+        .skills = NONE,
+    },
+    {
+        .isAlly = TRUE,
+        .lvl = 1, .xp = 0,
+        .hp = 35, .maxHp = 35,
+        .atk = 1, .def = 1,
+        .spAtk = 1, .spDef = 1,
+        .affinities = NONE,
+        .skills = NONE,
+    },
+    {
+        .isAlly = TRUE,
+        .lvl = 1, .xp = 0,
+        .hp = 35, .maxHp = 35,
+        .atk = 1, .def = 1,
+        .spAtk = 1, .spDef = 1,
+        .affinities = NONE,
+        .skills = NONE,
+    },
+    {
+        .isAlly = TRUE,
+        .lvl = 1, .xp = 0,
+        .hp = 35, .maxHp = 35,
+        .atk = 1, .def = 1,
+        .spAtk = 1, .spDef = 1,
+        .affinities = NONE,
+        .skills = NONE,
+    }
+};
 
 inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePower, Element element) {
     uint8_t base = basePower + (element == PHYSICAL ? origin->atk : origin->spAtk);

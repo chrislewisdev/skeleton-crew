@@ -20,6 +20,7 @@ typedef enum Affinity {
 } Affinity;
 
 typedef struct Character {
+    uint8_t isAlly;
     uint8_t lvl, xp;
     uint8_t hp, maxHp;
     uint8_t atk, def;

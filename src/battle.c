@@ -13,7 +13,10 @@
 #define ENEMY_LINE_X    110
 #define STANDOUT_X      24
 
+#define AI_ACTION_DURATION  60
+
 typedef struct CharacterDisplayInfo {
+    uint8_t visible;
     uint8_t x, y;
     uint8_t baseTile, baseSprite;
     const metasprite_t* metasprite;
@@ -29,11 +32,12 @@ BANKREF_EXTERN(exchange_your_wits)
 extern hUGESong_t exchange_your_wits;
 
 void renderStatusDisplay();
-void renderParty();
+void renderParties();
 void generateEnemyParty();
 void actionRun();
 void actionFight();
 void updateTargeting();
+void updateTurn();
 
 MenuItem primaryMenuItems[] = {
     {.description = "Fight", .action = actionFight},
@@ -70,26 +74,34 @@ Character* turnOrder[8] = {
 uint8_t turnOrderSize = 8;
 uint8_t turnOrderIndex = 0;
 Character* currentTurnCharacter = &party[0];
+Character* currentActionTarget = NULL;
+uint8_t playerHasActed = FALSE;
+void (*queuedAction)();
+uint8_t aiActionTimer = AI_ACTION_DURATION;
 
 void initCharacterDisplayInfo() {
+    partyDisplayInfo[0].visible = (party[0].hp > 0) ? TRUE : FALSE;
     partyDisplayInfo[0].metasprite = zyme_battle_metasprites[0];
     partyDisplayInfo[0].x = PARTY_LINE_X + STANDOUT_X;
     partyDisplayInfo[0].y = 32;
     partyDisplayInfo[0].baseTile = claimObjGfx(zyme_battle_TILE_COUNT, zyme_battle_tiles);
     partyDisplayInfo[0].baseSprite = claimSprites(4);
 
+    partyDisplayInfo[1].visible = (party[1].hp > 0) ? TRUE : FALSE;
     partyDisplayInfo[1].metasprite = ivan_battle_metasprites[0];
     partyDisplayInfo[1].x = PARTY_LINE_X;
     partyDisplayInfo[1].y = 32 + 20;
     partyDisplayInfo[1].baseTile = claimObjGfx(ivan_battle_TILE_COUNT, ivan_battle_tiles);
     partyDisplayInfo[1].baseSprite = claimSprites(4);
 
+    partyDisplayInfo[2].visible = (party[2].hp > 0) ? TRUE : FALSE;
     partyDisplayInfo[2].metasprite = olaf_battle_metasprites[0];
     partyDisplayInfo[2].x = PARTY_LINE_X;
     partyDisplayInfo[2].y = 32 + 40;
     partyDisplayInfo[2].baseTile = claimObjGfx(olaf_battle_TILE_COUNT, olaf_battle_tiles);
     partyDisplayInfo[2].baseSprite = claimSprites(4);
 
+    partyDisplayInfo[3].visible = (party[3].hp > 0) ? TRUE : FALSE;
     partyDisplayInfo[3].metasprite = pierre_battle_metasprites[0];
     partyDisplayInfo[3].x = PARTY_LINE_X;
     partyDisplayInfo[3].y = 32 + 60;
@@ -97,6 +109,7 @@ void initCharacterDisplayInfo() {
     partyDisplayInfo[3].baseSprite = claimSprites(4);
 
     for (uint8_t i = 0; i < enemyPartySize; i++) {
+        enemyDisplayInfo[i].visible = TRUE;
         enemyDisplayInfo[i].x = ENEMY_LINE_X;
         enemyDisplayInfo[i].y = 32 + i * 20;
         enemyDisplayInfo[i].baseSprite = claimSprites(4);
@@ -125,22 +138,31 @@ void stateInitBattle() {
 
     renderStatusDisplay();
     renderMenu(&primaryMenu);
-    renderParty();
+    renderParties();
 
     SWITCH_ROM(BANK(exchange_your_wits));
     hUGE_init(&exchange_your_wits);
     playMusic = TRUE;
+
+    turnOrderIndex = 0;
+    currentTurnCharacter = &party[0];
+    targetingIndex = 0;
 
     SHOW_BKG;
     SHOW_SPRITES;
 }
 
 void stateUpdateBattle() {
-    if (uiMode == PRIMARY) {
-        updateMenu(&primaryMenu);
-    } else if (uiMode == TARGETING) {
-        updateTargeting();
+    if (currentTurnCharacter->isAlly) {
+        if (uiMode == PRIMARY) {
+            updateMenu(&primaryMenu);
+        } else if (uiMode == TARGETING) {
+            updateTargeting();
+        }
+    } else {
+        renderCursor(0, 0);
     }
+    updateTurn();
 }
 
 void stateCleanupBattle() {
@@ -154,14 +176,30 @@ void actionRun() {
     queueStateSwitch(STATE_EXPLORE);
 }
 
+void actionExecuteAttack() {
+    uint8_t dmg = calculateDmg(currentActionTarget, currentTurnCharacter, 5, PHYSICAL);
+
+    if (dmg > currentActionTarget->hp) {
+        currentActionTarget->hp = 0;
+    } else {
+        currentActionTarget->hp -= dmg;
+    }
+}
+
 void actionFight() {
+    queuedAction = actionExecuteAttack;
     uiMode = TARGETING;
 }
 
 void generateEnemyParty() {
+    for (uint8_t i = 0; i < 4; i++) {
+        enemyParty[i].hp = 0;
+    }
+
     enemyPartySize = rand() % 3 + 1;
     for (uint8_t i = 0; i < enemyPartySize; i++) {
         uint8_t enemyId = rand() % ENEMY_TYPE_COUNT;
+        enemyParty[i].isAlly = FALSE;
         enemyParty[i].hp = enemyTypes[enemyId].hp;
         enemyParty[i].maxHp = enemyTypes[enemyId].hp;
         enemyParty[i].atk = enemyTypes[enemyId].atk;
@@ -183,37 +221,56 @@ void generateEnemyParty() {
 }
 
 void renderStatusDisplay() {
-    renderText(12, 13, "Zymie:"); renderText(16, 13, "45/45");
-    renderText(12, 14, "Ivan:"); renderText(16, 14, "52/52");
-    renderText(12, 15, "Olaf:"); renderText(16, 15, "35/35");
-    renderText(12, 16, "Pierre:"); renderText(16, 16, "14/63");
+    renderText(12, 13, "Zymie:"); //renderText(16, 13, "45/45");
+    renderNumber(16, 13, party[0].hp);
+    renderText(12, 14, "Ivan:"); //renderText(16, 14, "52/52");
+    renderNumber(16, 14, party[1].hp);
+    renderText(12, 15, "Olaf:"); //renderText(16, 15, "35/35");
+    renderNumber(16, 15, party[2].hp);
+    renderText(12, 16, "Pierre:"); //renderText(16, 16, "14/63");
+    renderNumber(16, 16, party[3].hp);
     render9slice(11, 12, 9, 6);
 }
 
-void renderParty() {
+void updateStatusDisplay() {
+    renderNumber(16, 13, party[0].hp);
+    renderNumber(16, 14, party[1].hp);
+    renderNumber(16, 15, party[2].hp);
+    renderNumber(16, 16, party[3].hp);
+}
+
+void renderParties() {
     for (uint8_t i = 0; i < 4; i++) {
-        move_metasprite(
-            partyDisplayInfo[i].metasprite,
-            partyDisplayInfo[i].baseTile,
-            partyDisplayInfo[i].baseSprite,
-            partyDisplayInfo[i].x,
-            partyDisplayInfo[i].y
-        );
+        if (partyDisplayInfo[i].visible) {
+            move_metasprite(
+                partyDisplayInfo[i].metasprite,
+                partyDisplayInfo[i].baseTile,
+                partyDisplayInfo[i].baseSprite,
+                partyDisplayInfo[i].x,
+                partyDisplayInfo[i].y
+            );
+        } else {
+            hide_metasprite(partyDisplayInfo[i].metasprite, partyDisplayInfo[i].baseSprite);
+        }
     }
     for (uint8_t i = 0; i < enemyPartySize; i++) {
-        move_metasprite(
-            enemyDisplayInfo[i].metasprite,
-            enemyDisplayInfo[i].baseTile,
-            enemyDisplayInfo[i].baseSprite,
-            enemyDisplayInfo[i].x,
-            enemyDisplayInfo[i].y
-        );
+        if (enemyDisplayInfo[i].visible) {
+            move_metasprite(
+                enemyDisplayInfo[i].metasprite,
+                enemyDisplayInfo[i].baseTile,
+                enemyDisplayInfo[i].baseSprite,
+                enemyDisplayInfo[i].x,
+                enemyDisplayInfo[i].y
+            );
+        } else {
+            hide_metasprite(enemyDisplayInfo[i].metasprite, enemyDisplayInfo[i].baseSprite);
+        }
     }
 }
 
 void updateTargeting() {
     uint8_t minAliveEnemyIndex = 0;
-    uint8_t maxAliveEnemyIndex = enemyPartySize;
+    uint8_t maxAliveEnemyIndex = enemyPartySize - 1;
 
     while (enemyParty[minAliveEnemyIndex].hp == 0) {
         minAliveEnemyIndex++;
@@ -240,10 +297,10 @@ void updateTargeting() {
     }
 
     if (KEYPRESSED(J_A)) {
-        //currentActionTarget = &enemyParty[targetingIndex];
-        //queuedAction();
-        //playerHasActed = TRUE;
-        //menuState = INITIAL;
+        currentActionTarget = &enemyParty[targetingIndex];
+        queuedAction();
+        playerHasActed = TRUE;
+        uiMode = PRIMARY;
     } else if (KEYPRESSED(J_B)) {
         uiMode = PRIMARY;
     }
@@ -251,40 +308,73 @@ void updateTargeting() {
     renderCursor(100, 36 + targetingIndex * 18);
 }
 
-//void onTurnEnd() {
-//    // Check if battle is over:
-//    // enemy party is all dead
-//    // OR player party is defeated
-//
-//    do {
-//        turnOrderIndex++;
-//        if (turnOrderIndex >= turnOrderSize) {
-//            turnOrderIndex = 0;
-//        }
-//    } while (turnOrder[turnOrderIndex]->currentHp == 0);
-//    currentTurnCharacter = turnOrder[turnOrderIndex];
-//    currentActionTarget = &enemyParty[0];
-//
-//    //renderCharacters();
-//}
-//
-//void updateTurn() {
-//    if (currentTurnCharacter->isAiControlled) {
-//        // Perform an AI action
-//        if (aiActionTimer == 0) {
-//            currentActionTarget = &playerParty[rand() % 4];
-//            actionAttack();
-//            onTurnEnd();
-//            aiActionTimer = AI_ACTION_DURATION;
-//        } else {
-//            aiActionTimer--;
-//        }
-//    } else {
-//        // Wait for the player to act
-//        if (playerHasActed) {
-//            onTurnEnd();
-//            playerHasActed = FALSE;
-//        }
-//    }
-//}
+void updatePartyDisplayInfo() {
+    for (uint8_t i = 0; i < 4; i++) {
+        partyDisplayInfo[i].visible = (party[i].hp > 0) ? TRUE : FALSE;
+        if (currentTurnCharacter == &party[i]) {
+            partyDisplayInfo[i].x = PARTY_LINE_X + STANDOUT_X;
+        } else {
+            partyDisplayInfo[i].x = PARTY_LINE_X;
+        }
+    }
+    for (uint8_t i = 0; i < 4; i++) {
+        enemyDisplayInfo[i].visible = (enemyParty[i].hp > 0) ? TRUE : FALSE;
+        if (currentTurnCharacter == &enemyParty[i]) {
+            enemyDisplayInfo[i].x = ENEMY_LINE_X - STANDOUT_X;
+        } else {
+            enemyDisplayInfo[i].x = ENEMY_LINE_X;
+        }
+    }
+}
+
+inline uint8_t isBattleWon() {
+    for (uint8_t i = 0; i < 4; i++) {
+        if (enemyParty[i].hp > 0) return FALSE;
+    }
+    return TRUE;
+}
+
+inline uint8_t isBattleLost() {
+    for (uint8_t i = 0; i < 4; i++) {
+        if (party[i].hp > 0) return FALSE;
+    }
+    return TRUE;
+}
+
+void onTurnEnd() {
+    if (isBattleWon()) {
+        queueStateSwitch(STATE_EXPLORE);
+    }
+
+    do {
+        turnOrderIndex++;
+        if (turnOrderIndex >= turnOrderSize) {
+            turnOrderIndex = 0;
+        }
+    } while (turnOrder[turnOrderIndex]->hp == 0);
+    currentTurnCharacter = turnOrder[turnOrderIndex];
+
+    updatePartyDisplayInfo();
+    renderParties();
+    updateStatusDisplay();
+}
+
+void updateTurn() {
+    if (!currentTurnCharacter->isAlly) {
+        if (aiActionTimer == 0) {
+            currentActionTarget = &party[rand() % 4];
+            actionExecuteAttack();
+            onTurnEnd();
+            aiActionTimer = AI_ACTION_DURATION;
+        } else {
+            aiActionTimer--;
+        }
+    } else {
+        // Wait for the player to act
+        if (playerHasActed) {
+            onTurnEnd();
+            playerHasActed = FALSE;
+        }
+    }
+}
 
