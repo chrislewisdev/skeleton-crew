@@ -362,6 +362,7 @@ void onTurnEnd() {
 void updateTurn() {
     if (!currentTurnCharacter->isAlly) {
         if (aiActionTimer == 0) {
+            // TODO: Make sure they only target alive characters!
             currentActionTarget = &party[rand() % 4];
             actionExecuteAttack();
             onTurnEnd();
