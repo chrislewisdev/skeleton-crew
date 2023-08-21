@@ -7,6 +7,11 @@
 #include "credits.h"
 #include "battle.h"
 
+typedef struct StepFunction {
+    uint8_t (*function)(uint8_t);
+    uint8_t step;
+} StepFunction;
+
 // Public variables
 AppState appState = STATE_NONE, queuedTargetState = STATE_NONE;
 void (*currentStateUpdate)() = NULL;
@@ -17,6 +22,8 @@ uint8_t input, previousInput;
 uint8_t gfxTileOffset = 1;
 uint8_t objTileOffset = 1;
 uint8_t spriteOffset = 0;
+
+StepFunction stepFunctions[4] = {{.function = NULL, .step = 0}};
 
 inline void queueStateSwitch(AppState targetState) {
     queuedTargetState = targetState;
@@ -97,5 +104,24 @@ inline uint8_t claimSprites(uint8_t numSprites) {
 
 inline void releaseAllSprites() {
     spriteOffset = 0;
+}
+
+inline void startStepFunction(uint8_t (*function)(uint8_t)) {
+    for (uint8_t i = 0; i < 4; i++) {
+        if (stepFunctions[i].function == NULL) {
+            stepFunctions[i].function = function;
+            stepFunctions[i].step = 0;
+            return;
+        }
+    }
+}
+
+inline void runStepFunctions() {
+    for (uint8_t i = 0; i < 4; i++) {
+        if (stepFunctions[i].function != NULL) {
+            uint8_t finished = stepFunctions[i].function(stepFunctions[i].step++);
+            if (finished) stepFunctions[i].function = NULL;
+        }
+    }
 }
 

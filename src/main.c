@@ -23,13 +23,13 @@ void main() {
     while (1) {
         wait_vbl_done();
 
-        checkStateSwitch();
-
         if (playMusic) hUGE_dosound();
 
         previousInput = input;
         input = joypad();
 
+        runStepFunctions();
+        checkStateSwitch();
         currentStateUpdate();
     }
 }

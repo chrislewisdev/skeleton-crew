@@ -1,25 +1,8 @@
-# Code
-- Title screen
-- Explore state
-- Battle state
-- Intro sequence
-- Outro sequence
-- Battle victory screen
-- Screen transitions
-- Save/load
-
-# Design
-- Dungeon map
-- Damage formulas
-- XP curve
-
-# Assets
-- Dungeon tileset
-- Enemy sprites
-    - Slime
-    - Spider
-    - Zombie
-    - Harpy
-    - Flaming skull
-- SFX
-
+- Smooth scrolling explore mode
+- Victory screen
+- Defeat screen
+- Fountain restoration
+- XP gain and level up
+- Damage display
+- Attack animations
+- Boss battle + ending

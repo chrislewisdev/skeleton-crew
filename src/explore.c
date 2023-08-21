@@ -28,6 +28,7 @@ Bounds viewport = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = ME
 Bounds renderedMap = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = META_SCREEN_HEIGHT};
 Facing playerFacing = F_DOWN;
 uint8_t stepCounter;
+uint8_t isMoving = FALSE;
 
 inline void renderMetamap(uint8_t, uint8_t);
 inline void renderColumn(uint8_t, uint8_t, uint8_t, uint8_t);
@@ -68,25 +69,25 @@ void stateInitExplore() {
 }
 
 void stateUpdateExplore() {
-    if (KEYPRESSED(J_UP)) {
+    if (KEYDOWN(J_UP) && !isMoving) {
         playerFacing = F_UP;
         if (!isTileSolid(player.x, player.y - 1)) {
             move(F_UP);
         }
         renderPlayer();
-    } else if (KEYPRESSED(J_DOWN)) {
+    } else if (KEYDOWN(J_DOWN) && !isMoving) {
         playerFacing = F_DOWN;
         if (!isTileSolid(player.x, player.y + 1)) {
             move(F_DOWN);
         }
         renderPlayer();
-    } else if (KEYPRESSED(J_LEFT)) {
+    } else if (KEYDOWN(J_LEFT) && !isMoving) {
         playerFacing = F_LEFT;
         if (!isTileSolid(player.x - 1, player.y)) {
             move(F_LEFT);
         }
         renderPlayer();
-    } else if (KEYPRESSED(J_RIGHT)) {
+    } else if (KEYDOWN(J_RIGHT) && !isMoving) {
         playerFacing = F_RIGHT;
         if (!isTileSolid(player.x + 1, player.y)) {
             move(F_RIGHT);
@@ -95,7 +96,34 @@ void stateUpdateExplore() {
     }
 }
 
+uint8_t sfSmoothScroll(uint8_t step) {
+    if (step < 16) {
+        if (playerFacing == F_UP) {
+            scroll_bkg(0, -1);
+        } else if (playerFacing == F_DOWN) {
+            scroll_bkg(0, 1);
+        } else if (playerFacing == F_LEFT) {
+            scroll_bkg(-1, 0);
+        } else if (playerFacing == F_RIGHT) {
+            scroll_bkg(1, 0);
+        }
+    }
+
+    if (step >= 19) {
+        // Trigger 'end-of-step' logic
+        isMoving = FALSE;
+        stepCounter++;
+        if (stepCounter > 5) {
+            queueStateSwitch(STATE_BATTLE);
+        }
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
 void move(Facing direction) {
+    // TODO: We can probably clean up this code using % META_TILEMAP_HEIGHT instead of all these checks
     if (direction == F_UP) {
         player.y--;
 
@@ -137,12 +165,9 @@ void move(Facing direction) {
         else                                            viewport.right++;
         renderColumn(viewport.right, viewport.top, renderedMap.right, renderedMap.top);
     }
-    move_bkg(viewport.left * 16 + 8, viewport.top * 16 + 8);
-
-    stepCounter++;
-    if (stepCounter > 5) {
-        queueStateSwitch(STATE_BATTLE);
-    }
+    //move_bkg(viewport.left * 16 + 8, viewport.top * 16 + 8);
+    startStepFunction(sfSmoothScroll);
+    isMoving = TRUE;
 }
 
 inline uint8_t getMetaTile(uint8_t x, uint8_t y) {

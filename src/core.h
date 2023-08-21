@@ -6,6 +6,7 @@
 #define NULL    0
 
 #define KEYPRESSED(KEY) ((input & KEY) && !(previousInput & KEY))
+#define KEYDOWN(KEY)    (input & KEY)
 
 typedef enum AppState {
     STATE_NONE,
@@ -37,6 +38,8 @@ inline void releaseAllObjGfx();
 inline uint8_t claimSprite();
 inline uint8_t claimSprites(uint8_t numSprites);
 inline void releaseAllSprites();
+inline void startStepFunction(uint8_t (*function)(uint8_t));
+inline void runStepFunctions();
 
 #endif
 
