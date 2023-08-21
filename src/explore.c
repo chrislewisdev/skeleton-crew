@@ -29,6 +29,7 @@ Bounds renderedMap = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom =
 Facing playerFacing = F_DOWN;
 uint8_t stepCounter;
 uint8_t isMoving = FALSE;
+uint8_t playerAnimationFrame = 0, stepAnimationAlternator = 0;
 
 inline void renderMetamap(uint8_t, uint8_t);
 inline void renderColumn(uint8_t, uint8_t, uint8_t, uint8_t);
@@ -109,11 +110,17 @@ uint8_t sfSmoothScroll(uint8_t step) {
         }
     }
 
+    // Trigger animation frames
+    playerAnimationFrame = step > 8 ? 0 : stepAnimationAlternator + 1;
+    renderPlayer();
+
     if (step >= 19) {
         // Trigger 'end-of-step' logic
         isMoving = FALSE;
+        playerAnimationFrame = 0;
+        renderPlayer();
         stepCounter++;
-        if (stepCounter > 5) {
+        if (stepCounter > 15) {
             queueStateSwitch(STATE_BATTLE);
         }
         return 1;
@@ -168,6 +175,7 @@ void move(Facing direction) {
     //move_bkg(viewport.left * 16 + 8, viewport.top * 16 + 8);
     startStepFunction(sfSmoothScroll);
     isMoving = TRUE;
+    stepAnimationAlternator = (stepAnimationAlternator + 1) % 2;
 }
 
 inline uint8_t getMetaTile(uint8_t x, uint8_t y) {
@@ -180,9 +188,9 @@ inline uint8_t isTileSolid(uint8_t x, uint8_t y) {
 }
 
 inline void renderPlayer() {
-    uint8_t frameId = 0;
-    if (playerFacing == F_UP) frameId = 3;
-    else if (playerFacing == F_LEFT || playerFacing == F_RIGHT) frameId = 6;
+    uint8_t frameId = playerAnimationFrame;
+    if (playerFacing == F_UP) frameId += 3;
+    else if (playerFacing == F_LEFT || playerFacing == F_RIGHT) frameId += 6;
 
     uint8_t x = 5 * 16 + 8;
     uint8_t y = 4 * 16 + 16;
