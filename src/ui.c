@@ -58,6 +58,18 @@ inline void renderNumber(uint8_t x, uint8_t y, uint8_t value) {
     set_bkg_tile_xy(x + 1, y, baseNumbersTile + onesDigit);
 }
 
+inline void renderNumberAsSprite(uint8_t x, uint8_t y, uint8_t baseSprite, uint8_t value) {
+    uint8_t onesDigit = value % 10;
+    set_sprite_tile(baseSprite + 1, baseNumbersTile + onesDigit);
+    move_sprite(baseSprite + 1, x + 8, y);
+
+    if (value > 10) {
+        uint8_t tensDigit = value / 10;
+        set_sprite_tile(baseSprite, baseNumbersTile + tensDigit);
+        move_sprite(baseSprite, x, y);
+    }
+}
+
 void renderMenu(Menu *menu) {
     uint8_t x = menu->x;
     uint8_t y = menu->y;

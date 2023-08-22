@@ -13,7 +13,7 @@
 #define ENEMY_LINE_X    110
 #define STANDOUT_X      24
 
-#define AI_ACTION_DURATION  60
+#define AI_ACTION_DURATION  80
 
 typedef struct CharacterDisplayInfo {
     uint8_t visible;
@@ -76,10 +76,11 @@ uint8_t turnOrderSize = 8;
 uint8_t turnOrderIndex = 0;
 Character* currentTurnCharacter = &party[0];
 Character* currentActionTarget = NULL;
+CharacterDisplayInfo* currentActionTargetDisplayInfo = NULL;
 uint8_t playerHasActed = FALSE;
 void (*queuedAction)();
 uint8_t aiActionTimer = AI_ACTION_DURATION;
-uint8_t mostRecentDamageDealt = 5;
+uint8_t mostRecentDmgDealt = 5;
 
 void initCharacterDisplayInfo() {
     partyDisplayInfo[0].visible = (party[0].hp > 0) ? TRUE : FALSE;
@@ -176,11 +177,28 @@ void stateCleanupBattle() {
     }
 }
 
-//uint8_t sfRenderDamage(uint8_t step) {
-//    if (step == 0) {
-//        
-//    }
-//}
+uint8_t sfRenderDamage(uint8_t step) {
+    if (step == 0) {
+        uint8_t x = currentActionTargetDisplayInfo->x;
+        if (currentActionTarget->isAlly)    x += 16;
+        else                                x -= 16;
+
+        renderNumberAsSprite(x, currentActionTargetDisplayInfo->y, dmgDisplayBaseSprite, mostRecentDmgDealt);
+    }
+
+    if (step % 8 == 0) {
+        scroll_sprite(dmgDisplayBaseSprite, 0, -1);
+        scroll_sprite(dmgDisplayBaseSprite + 1, 0, -1);
+    }
+
+    if (step >= 60) {
+        hide_sprite(dmgDisplayBaseSprite);
+        hide_sprite(dmgDisplayBaseSprite + 1);
+        return 1;
+    }
+
+    return 0;
+}
 
 void actionRun() {
     queueStateSwitch(STATE_EXPLORE);
@@ -194,6 +212,9 @@ void actionExecuteAttack() {
     } else {
         currentActionTarget->hp -= dmg;
     }
+
+    mostRecentDmgDealt = dmg;
+    startStepFunction(sfRenderDamage);
 }
 
 void actionFight() {
@@ -308,6 +329,7 @@ void updateTargeting() {
 
     if (KEYPRESSED(J_A)) {
         currentActionTarget = &enemyParty[targetingIndex];
+        currentActionTargetDisplayInfo = &enemyDisplayInfo[targetingIndex];
         queuedAction();
         playerHasActed = TRUE;
         uiMode = PRIMARY;
@@ -373,7 +395,9 @@ void updateTurn() {
     if (!currentTurnCharacter->isAlly) {
         if (aiActionTimer == 0) {
             // TODO: Make sure they only target alive characters!
-            currentActionTarget = &party[rand() % 4];
+            uint8_t targetIndex = rand() % 4;
+            currentActionTarget = &party[targetIndex];
+            currentActionTargetDisplayInfo = &partyDisplayInfo[targetIndex];
             actionExecuteAttack();
             onTurnEnd();
             aiActionTimer = AI_ACTION_DURATION;

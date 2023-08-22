@@ -1,5 +1,4 @@
 - Boss battle + ending
-- Damage display
 - Victory screen
 - Defeat screen
 - Fountain restoration

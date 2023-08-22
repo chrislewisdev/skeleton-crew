@@ -121,7 +121,7 @@ uint8_t sfSmoothScroll(uint8_t step) {
         playerAnimationFrame = 0;
         renderPlayer();
         stepCounter++;
-        if (stepCounter > 15) {
+        if (stepCounter > 5) {
             queueStateSwitch(STATE_BATTLE);
         }
         return 1;
