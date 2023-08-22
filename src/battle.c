@@ -54,6 +54,7 @@ Menu primaryMenu = {
 };
 
 uint8_t battleBackgroundBaseTile;
+uint8_t dmgDisplayBaseSprite;
 uint8_t enemyPartySize;
 Character enemyParty[4];
 // Might be able to unify these arrays at some point...
@@ -78,6 +79,7 @@ Character* currentActionTarget = NULL;
 uint8_t playerHasActed = FALSE;
 void (*queuedAction)();
 uint8_t aiActionTimer = AI_ACTION_DURATION;
+uint8_t mostRecentDamageDealt = 5;
 
 void initCharacterDisplayInfo() {
     partyDisplayInfo[0].visible = (party[0].hp > 0) ? TRUE : FALSE;
@@ -123,6 +125,7 @@ void stateInitBattle() {
 
     releaseAllBkgGfx();
     releaseAllObjGfx();
+    releaseAllSharedGfx();
     releaseAllSprites();
 
     move_bkg(0, 0);
@@ -135,6 +138,7 @@ void stateInitBattle() {
 
     generateEnemyParty();
     initCharacterDisplayInfo();
+    dmgDisplayBaseSprite = claimSprites(2);
 
     renderStatusDisplay();
     renderMenu(&primaryMenu);
@@ -171,6 +175,12 @@ void stateCleanupBattle() {
         enemyTypes[i].baseTile = 0;
     }
 }
+
+//uint8_t sfRenderDamage(uint8_t step) {
+//    if (step == 0) {
+//        
+//    }
+//}
 
 void actionRun() {
     queueStateSwitch(STATE_EXPLORE);

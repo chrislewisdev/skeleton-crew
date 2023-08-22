@@ -90,3 +90,16 @@ inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePo
     return (element == PHYSICAL ? withAffinity - target->def : withAffinity - target->spDef);
 }
 
+inline uint8_t getRequiredXp(uint8_t level) {
+    return level * 10 + 10;
+}
+
+inline void applyZymieGrowths(Character* c) {
+    c->hp = 35 + c->lvl * 3;
+    c->atk = 2 + c->lvl;
+    c->def = 2 + c->lvl;
+    c->spAtk = 2 + c->lvl;
+    c->spDef = 2 + c->lvl;
+}
+// etc, for other characters...
+

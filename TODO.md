@@ -1,8 +1,7 @@
-- Smooth scrolling explore mode
+- Boss battle + ending
+- Damage display
 - Victory screen
 - Defeat screen
 - Fountain restoration
 - XP gain and level up
-- Damage display
 - Attack animations
-- Boss battle + ending

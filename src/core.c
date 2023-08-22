@@ -22,6 +22,7 @@ uint8_t input, previousInput;
 uint8_t gfxTileOffset = 1;
 uint8_t objTileOffset = 1;
 uint8_t spriteOffset = 0;
+uint8_t sharedTileOffset = 255;
 
 StepFunction stepFunctions[4] = {{.function = NULL, .step = 0}};
 
@@ -70,13 +71,11 @@ inline uint8_t claimBkgGfx(uint8_t numTiles, const uint8_t *data) {
     set_bkg_data(baseTile, numTiles, data);
     return baseTile;
 }
-
 inline uint8_t claimBkgGfxRaw(uint8_t numTiles) {
     uint8_t baseTile = gfxTileOffset;
     gfxTileOffset += numTiles;
     return baseTile;
 }
-
 inline void releaseAllBkgGfx() {
     gfxTileOffset = 1;
 }
@@ -87,7 +86,6 @@ inline uint8_t claimObjGfx(uint8_t numTiles, const uint8_t *data) {
     set_sprite_data(baseTile, numTiles, data);
     return baseTile;
 }
-
 inline void releaseAllObjGfx() {
     objTileOffset = 1;
 }
@@ -95,15 +93,22 @@ inline void releaseAllObjGfx() {
 inline uint8_t claimSprite() {
     return spriteOffset++;
 }
-
 inline uint8_t claimSprites(uint8_t numSprites) {
     uint8_t baseSprite = spriteOffset;
     spriteOffset += numSprites;
     return baseSprite;
 }
-
 inline void releaseAllSprites() {
     spriteOffset = 0;
+}
+
+inline uint8_t claimSharedGfx(uint8_t numTiles, const uint8_t* data) {
+    sharedTileOffset -= numTiles;
+    set_bkg_data(sharedTileOffset, numTiles, data);
+    return sharedTileOffset;
+}
+inline void releaseAllSharedGfx() {
+    sharedTileOffset = 255;
 }
 
 inline void startStepFunction(uint8_t (*function)(uint8_t)) {

@@ -12,7 +12,7 @@ uint8_t cursorTile, cursorSprite;
 
 void initUi() {
     baseNineSliceTile = claimBkgGfx(ui9slice_TILE_COUNT, ui9slice_tiles);
-    baseNumbersTile = claimBkgGfx(numbers_TILE_COUNT, numbers_tiles);
+    baseNumbersTile = claimSharedGfx(numbers_TILE_COUNT, numbers_tiles);
     cursorTile = claimObjGfx(cursor_TILE_COUNT, cursor_tiles);
     cursorSprite = claimSprite();
 

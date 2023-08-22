@@ -26,6 +26,7 @@ void stateInitTitle() {
 
     releaseAllBkgGfx();
     releaseAllObjGfx();
+    releaseAllSharedGfx();
     releaseAllSprites();
     titleScreenTileBase = claimBkgGfx(title_screen_TILE_COUNT, title_screen_tiles);
     set_bkg_based_tiles(0, 0, 20, 18, title_screen_map, titleScreenTileBase);

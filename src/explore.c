@@ -47,6 +47,7 @@ void stateInitExplore() {
 
     releaseAllBkgGfx();
     releaseAllObjGfx();
+    releaseAllSharedGfx();
     releaseAllSprites();
 
     tilesBase = claimBkgGfx(tiles_TILE_COUNT, tiles_tiles);
