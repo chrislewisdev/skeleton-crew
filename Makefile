@@ -70,7 +70,7 @@ gen/gbcompo.c:	tilemap/gbcompo.png | gen/
 	$(PNG2ASSET) $< -b 1 -map -noflip -c $@ 
 
 gen/zymie.c: sprite/zymie.png | gen/
-	$(PNG2ASSET) $< -spr8x8 -sw 16 -sh 16 -keep_palette_order -noflip -c $@ 
+	$(PNG2ASSET) $< -b 1 -spr8x8 -sw 16 -sh 16 -keep_palette_order -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(SPRITEDIR)/%.png | gen/
 	$(PNG2ASSET) $< -spr8x8 -px 0 -py 0 -keep_palette_order -keep_duplicate_tiles -noflip -c $@ 
@@ -79,7 +79,7 @@ $(GENDIR)/%.c:	$(MAPDIR)/%.png | gen/
 	$(PNG2ASSET) $< -b 1 -map -keep_palette_order -noflip -c $@ 
 
 $(GENDIR)/%.c:	$(LEVELDIR)/%.png | gen/
-	$(PNG2ASSET) $< -map -source_tileset tiled/metatiles.png -noflip -c $@ 
+	$(PNG2ASSET) $< -b 1 -map -source_tileset tiled/metatiles.png -noflip -c $@ 
 
 # Link the compiled object files into a .gb ROM file
 $(BINS):	$(OBJS)

@@ -1,5 +1,6 @@
 #include "core.h"
 #include "hUGEDriver.h"
+#include "battle.h"
 #include "gen/tiles.h"
 #include "gen/metamap.h"
 #include "gen/zymie.h"
@@ -38,6 +39,7 @@ inline void renderPlayer();
 inline uint8_t isTileSolid(uint8_t, uint8_t);
 void updateCamera();
 void move(Facing direction);
+inline uint8_t getMetaTile(uint8_t, uint8_t);
 
 void stateInitExplore() {
     HIDE_BKG;
@@ -121,7 +123,11 @@ uint8_t sfSmoothScroll(uint8_t step) {
         playerAnimationFrame = 0;
         renderPlayer();
         stepCounter++;
-        if (stepCounter > 5) {
+        if (getMetaTile(player.x, player.y) == 5) {
+            triggerBossBattle = TRUE;
+            queueStateSwitch(STATE_BATTLE);
+        } else if (stepCounter > 15) {
+            triggerBossBattle = FALSE;
             queueStateSwitch(STATE_BATTLE);
         }
         return 1;
@@ -185,7 +191,8 @@ inline uint8_t getMetaTile(uint8_t x, uint8_t y) {
 }
 
 inline uint8_t isTileSolid(uint8_t x, uint8_t y) {
-    return getMetaTile(x, y) != 2;
+    uint8_t metatile = getMetaTile(x, y);
+    return metatile != 2 && metatile != 5;
 }
 
 inline void renderPlayer() {

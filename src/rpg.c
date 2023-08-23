@@ -6,6 +6,7 @@
 #include "gen/harpy.h"
 #include "gen/skull.h"
 #include "gen/ghost.h"
+#include "gen/boss.h"
 
 #define NONE  {0}
 #define ENEMY(NAME, HP, ATK, DEF, SPATK, SPDEF, AFF, SKILLS, META, TILECOUNT, TILES) \
@@ -29,6 +30,7 @@ extern const metasprite_t harpy_metasprite0;
 extern const metasprite_t skull_metasprite0;
 extern const metasprite_t ghost_metasprite0;
 extern const metasprite_t spider_metasprite0;
+extern const metasprite_t boss_metasprite0;
 EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
     ENEMY("Slime", 10, 2, 2, 1, 1, NONE, NONE, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
     ENEMY("Zombie", 7, 3, 1, 1, 0, NONE, NONE, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
@@ -36,6 +38,7 @@ EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
     ENEMY("Skull", 7, 3, 1, 1, 0, NONE, NONE, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
     ENEMY("Ghost", 7, 3, 1, 1, 0, NONE, NONE, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
     ENEMY("Spider", 7, 3, 1, 1, 0, NONE, NONE, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
+    ENEMY("Demon", 15, 5, 3, 3, 3, NONE, NONE, &boss_metasprite0, boss_TILE_COUNT, boss_tiles),
 };
 
 Character party[4] = {

@@ -53,6 +53,9 @@ Menu primaryMenu = {
     .items = primaryMenuItems
 };
 
+// Public
+uint8_t triggerBossBattle = FALSE;
+
 uint8_t battleBackgroundBaseTile;
 uint8_t dmgDisplayBaseSprite;
 uint8_t enemyPartySize;
@@ -115,7 +118,7 @@ void initCharacterDisplayInfo() {
         enemyDisplayInfo[i].visible = TRUE;
         enemyDisplayInfo[i].x = ENEMY_LINE_X;
         enemyDisplayInfo[i].y = 32 + i * 20;
-        enemyDisplayInfo[i].baseSprite = claimSprites(4);
+        enemyDisplayInfo[i].baseSprite = triggerBossBattle ? claimSprites(8) : claimSprites(4);
     }
 }
 
@@ -222,32 +225,41 @@ void actionFight() {
     uiMode = TARGETING;
 }
 
+inline void configureEnemy(uint8_t i, uint8_t enemyId) {
+    enemyParty[i].isAlly = FALSE;
+    enemyParty[i].hp = enemyTypes[enemyId].hp;
+    enemyParty[i].maxHp = enemyTypes[enemyId].hp;
+    enemyParty[i].atk = enemyTypes[enemyId].atk;
+    enemyParty[i].def = enemyTypes[enemyId].def;
+    enemyParty[i].spAtk = enemyTypes[enemyId].spAtk;
+    enemyParty[i].spDef = enemyTypes[enemyId].spDef;
+    
+    for (uint8_t j = 0; j < 4; j++) {
+        enemyParty[i].affinities[j] = enemyTypes[enemyId].affinities[j];
+        enemyParty[i].skills[j] = enemyTypes[enemyId].skills[j];
+    }
+
+    enemyDisplayInfo[i].metasprite = enemyTypes[enemyId].metasprite;
+    if (enemyTypes[enemyId].baseTile == 0) {
+        enemyTypes[enemyId].baseTile = claimObjGfx(enemyTypes[enemyId].tileCount, enemyTypes[enemyId].tiles);
+    }
+    enemyDisplayInfo[i].baseTile = enemyTypes[enemyId].baseTile;
+}
+
 void generateEnemyParty() {
     for (uint8_t i = 0; i < 4; i++) {
         enemyParty[i].hp = 0;
     }
 
-    enemyPartySize = rand() % 3 + 1;
-    for (uint8_t i = 0; i < enemyPartySize; i++) {
-        uint8_t enemyId = rand() % ENEMY_TYPE_COUNT;
-        enemyParty[i].isAlly = FALSE;
-        enemyParty[i].hp = enemyTypes[enemyId].hp;
-        enemyParty[i].maxHp = enemyTypes[enemyId].hp;
-        enemyParty[i].atk = enemyTypes[enemyId].atk;
-        enemyParty[i].def = enemyTypes[enemyId].def;
-        enemyParty[i].spAtk = enemyTypes[enemyId].spAtk;
-        enemyParty[i].spDef = enemyTypes[enemyId].spDef;
-        
-        for (uint8_t j = 0; j < 4; j++) {
-            enemyParty[i].affinities[j] = enemyTypes[enemyId].affinities[j];
-            enemyParty[i].skills[j] = enemyTypes[enemyId].skills[j];
+    if (triggerBossBattle) {
+        enemyPartySize = 1;
+        configureEnemy(0, ENEMY_TYPE_COUNT - 1);
+    } else {
+        enemyPartySize = rand() % 3 + 1;
+        for (uint8_t i = 0; i < enemyPartySize; i++) {
+            uint8_t enemyId = rand() % (ENEMY_TYPE_COUNT - 1);
+            configureEnemy(i, enemyId);
         }
-
-        enemyDisplayInfo[i].metasprite = enemyTypes[enemyId].metasprite;
-        if (enemyTypes[enemyId].baseTile == 0) {
-            enemyTypes[enemyId].baseTile = claimObjGfx(enemyTypes[enemyId].tileCount, enemyTypes[enemyId].tiles);
-        }
-        enemyDisplayInfo[i].baseTile = enemyTypes[enemyId].baseTile;
     }
 }
 
@@ -375,7 +387,8 @@ inline uint8_t isBattleLost() {
 
 void onTurnEnd() {
     if (isBattleWon()) {
-        queueStateSwitch(STATE_EXPLORE);
+        if (triggerBossBattle)  queueStateSwitch(STATE_OUTRO);
+        else                    queueStateSwitch(STATE_EXPLORE);
     }
 
     do {

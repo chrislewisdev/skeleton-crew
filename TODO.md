@@ -1,6 +1,7 @@
+- Attack animations
 - Boss battle + ending
+- Transition screen
 - Victory screen
 - Defeat screen
 - Fountain restoration
 - XP gain and level up
-- Attack animations

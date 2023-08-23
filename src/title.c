@@ -23,6 +23,11 @@ uint8_t titleScreenTileBase;
 
 void stateInitTitle() {
     HIDE_BKG;
+    HIDE_SPRITES;
+
+    SWITCH_ROM(1);
+
+    hide_sprites_range(0, 40);
 
     releaseAllBkgGfx();
     releaseAllObjGfx();
