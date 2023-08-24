@@ -6,6 +6,7 @@
 #include "explore.h"
 #include "credits.h"
 #include "battle.h"
+#include "transition.h"
 
 typedef struct StepFunction {
     uint8_t (*function)(uint8_t);
@@ -60,6 +61,9 @@ void checkStateSwitch() {
         stateInitBattle();
         currentStateUpdate = stateUpdateBattle;
         currentStateCleanup = stateCleanupBattle;
+    } else if (queuedTargetState == STATE_TRANSITION) {
+        stateInitTransition();
+        currentStateUpdate = stateUpdateTransition;
     }
 
     appState = queuedTargetState;
@@ -67,6 +71,9 @@ void checkStateSwitch() {
 
 inline void startMusic(hUGESong_t* song, uint8_t bank) {
     NR52_REG = 0x80;
+    NR51_REG = 0xFF;
+    NR50_REG = 0x77;
+
     musicBank = bank;
     playMusic = TRUE;
     SWITCH_ROM(bank);

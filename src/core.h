@@ -17,7 +17,8 @@ typedef enum AppState {
     STATE_EXPLORE,
     STATE_BATTLE,
     STATE_OUTRO,
-    STATE_CREDITS
+    STATE_CREDITS,
+    STATE_TRANSITION,
 } AppState;
 
 extern AppState appState;

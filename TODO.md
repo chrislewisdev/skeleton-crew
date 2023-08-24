@@ -1,7 +1,9 @@
 - Attack animations
-- Boss battle + ending
 - Transition screen
 - Victory screen
 - Defeat screen
 - Fountain restoration
 - XP gain and level up
+- Skill usage
+- Fill out the map
+- Tweak enemy + player stats

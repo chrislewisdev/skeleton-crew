@@ -150,11 +150,11 @@ void stateInitBattle() {
     renderMenu(&primaryMenu);
     renderParties();
 
-    if (triggerBossBattle) {
-        startMusic(&demon_destruction, BANK(demon_destruction));
-    } else {
-        startMusic(&exchange_your_wits, BANK(exchange_your_wits));
-    }
+    //if (triggerBossBattle) {
+    //    startMusic(&demon_destruction, BANK(demon_destruction));
+    //} else {
+    //    startMusic(&exchange_your_wits, BANK(exchange_your_wits));
+    //}
 
     turnOrderIndex = 0;
     currentTurnCharacter = &party[0];

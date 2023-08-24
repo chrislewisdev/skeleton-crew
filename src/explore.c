@@ -1,6 +1,7 @@
 #include "core.h"
 #include "hUGEDriver.h"
 #include "battle.h"
+#include "transition.h"
 #include "gen/tiles.h"
 #include "gen/metamap.h"
 #include "gen/zymie.h"
@@ -125,10 +126,12 @@ uint8_t sfSmoothScroll(uint8_t step) {
         stepCounter++;
         if (getMetaTile(player.x, player.y) == 5) {
             triggerBossBattle = TRUE;
-            queueStateSwitch(STATE_BATTLE);
+            transitionTarget = STATE_BATTLE;
+            queueStateSwitch(STATE_TRANSITION);
         } else if (stepCounter > 15) {
             triggerBossBattle = FALSE;
-            queueStateSwitch(STATE_BATTLE);
+            transitionTarget = STATE_BATTLE;
+            queueStateSwitch(STATE_TRANSITION);
         }
         return 1;
     } else {
