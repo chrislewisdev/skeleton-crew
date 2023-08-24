@@ -10,6 +10,7 @@
 #include "hUGEDriver.h"
 
 uint8_t playMusic = 0;
+uint8_t musicBank = 2;
 
 void main() {
     // Enable sound
@@ -17,13 +18,15 @@ void main() {
     NR51_REG = 0xFF;
     NR50_REG = 0x77;
 
-    initrand(15);
-
     queueStateSwitch(STATE_SPLASH);
     while (1) {
         wait_vbl_done();
 
-        if (playMusic) hUGE_dosound();
+        if (playMusic) {
+            SWITCH_ROM(musicBank);
+            hUGE_dosound();
+            SWITCH_ROM(1);
+        }
 
         previousInput = input;
         input = joypad();

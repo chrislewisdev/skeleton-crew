@@ -3,6 +3,9 @@
 #include "ui.h"
 #include "gen/title-screen.h"
 
+BANKREF_EXTERN(skeleton_cru)
+extern hUGESong_t skeleton_cru;
+
 void actionNewGame();
 void actionCredits();
 
@@ -38,6 +41,8 @@ void stateInitTitle() {
 
     initUi();
     renderMenu(&mainMenu);
+
+    startMusic(&skeleton_cru, BANK(skeleton_cru));
 
     SHOW_BKG;
     SHOW_SPRITES;

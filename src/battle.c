@@ -30,6 +30,8 @@ typedef enum UiMode {
 
 BANKREF_EXTERN(exchange_your_wits)
 extern hUGESong_t exchange_your_wits;
+BANKREF_EXTERN(demon_destruction)
+extern hUGESong_t demon_destruction;
 
 void renderStatusDisplay();
 void renderParties();
@@ -148,9 +150,11 @@ void stateInitBattle() {
     renderMenu(&primaryMenu);
     renderParties();
 
-    SWITCH_ROM(BANK(exchange_your_wits));
-    hUGE_init(&exchange_your_wits);
-    playMusic = TRUE;
+    if (triggerBossBattle) {
+        startMusic(&demon_destruction, BANK(demon_destruction));
+    } else {
+        startMusic(&exchange_your_wits, BANK(exchange_your_wits));
+    }
 
     turnOrderIndex = 0;
     currentTurnCharacter = &party[0];

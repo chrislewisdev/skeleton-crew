@@ -15,6 +15,7 @@ Press A to start";
 void stateInitIntro() {
     HIDE_BKG;
     HIDE_SPRITES;
+    stopMusic();
     releaseAllBkgGfx();
     fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0x00u);
     SHOW_BKG;

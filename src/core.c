@@ -65,6 +65,19 @@ void checkStateSwitch() {
     appState = queuedTargetState;
 }
 
+inline void startMusic(hUGESong_t* song, uint8_t bank) {
+    NR52_REG = 0x80;
+    musicBank = bank;
+    playMusic = TRUE;
+    SWITCH_ROM(bank);
+    hUGE_init(song);
+    SWITCH_ROM(1);
+}
+inline void stopMusic() {
+    NR52_REG = 0x00;
+    playMusic = FALSE;
+}
+
 inline uint8_t claimBkgGfx(uint8_t numTiles, const uint8_t *data) {
     uint8_t baseTile = gfxTileOffset;
     gfxTileOffset += numTiles;

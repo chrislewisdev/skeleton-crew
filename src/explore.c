@@ -19,6 +19,7 @@ typedef struct Bounds { uint8_t left, right, top, bottom; } Bounds;
 
 typedef enum Facing { F_UP, F_DOWN, F_LEFT, F_RIGHT } Facing;
 
+BANKREF_EXTERN(dungeon_stroll)
 extern const hUGESong_t dungeon_stroll;
 
 uint8_t tilesBase;
@@ -63,8 +64,7 @@ void stateInitExplore() {
     viewport.left = 0; viewport.right = META_SCREEN_WIDTH;
     viewport.top = 0; viewport.bottom = META_SCREEN_HEIGHT;
 
-    hUGE_init(&dungeon_stroll);
-    playMusic = TRUE;
+    startMusic(&dungeon_stroll, BANK(dungeon_stroll));
     
     SHOW_BKG;
     SHOW_SPRITES;
