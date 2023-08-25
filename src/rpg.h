@@ -5,6 +5,7 @@
 #include <gb/metasprites.h>
 
 #define ENEMY_TYPE_COUNT    7
+#define SKILL_TYPE_COUNT    11
 
 typedef enum Element {
     PHYSICAL,
@@ -19,6 +20,10 @@ typedef enum Affinity {
     RESIST,
 } Affinity;
 
+typedef struct LearnedSkill {
+    uint8_t lvlRequired, skillId;
+} LearnedSkill;
+
 typedef struct Character {
     uint8_t isAlly;
     uint8_t lvl, xp;
@@ -27,6 +32,8 @@ typedef struct Character {
     uint8_t spAtk, spDef;
     uint8_t affinities[4];
     uint8_t skills[4];
+    //LearnedSkill learnedSkills[4];
+    //void (*growthFunction)(Character*);
 } Character;
 
 typedef struct EnemyType {
@@ -36,6 +43,7 @@ typedef struct EnemyType {
     uint8_t spAtk, spDef;
     uint8_t affinities[4];
     uint8_t skills[4];
+    uint8_t xp;
     const metasprite_t* metasprite;
     uint8_t tileCount;
     const uint8_t* tiles;
@@ -50,7 +58,7 @@ typedef struct Skill {
 
 inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePower, Element element);
 
-extern const Skill skills[7];
+extern const Skill skills[SKILL_TYPE_COUNT];
 extern Character party[4];
 extern EnemyType enemyTypes[ENEMY_TYPE_COUNT];
 

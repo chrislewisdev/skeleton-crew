@@ -4,6 +4,7 @@
 #include <gb/gb.h>
 
 extern uint8_t triggerBossBattle;
+extern uint8_t xpGained;
 
 void stateInitBattle();
 void stateUpdateBattle();

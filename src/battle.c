@@ -57,6 +57,7 @@ Menu primaryMenu = {
 
 // Public
 uint8_t triggerBossBattle = FALSE;
+uint8_t xpGained;
 
 uint8_t battleBackgroundBaseTile;
 uint8_t dmgDisplayBaseSprite;
@@ -142,6 +143,7 @@ void stateInitBattle() {
     battleBackgroundBaseTile = claimBkgGfx(battle_background_TILE_COUNT, battle_background_tiles);
     set_bkg_based_tiles(0, 0, 20, 12, battle_background_map, battleBackgroundBaseTile);
 
+    xpGained = 0;
     generateEnemyParty();
     initCharacterDisplayInfo();
     dmgDisplayBaseSprite = claimSprites(2);
@@ -214,8 +216,9 @@ void actionRun() {
 void actionExecuteAttack() {
     uint8_t dmg = calculateDmg(currentActionTarget, currentTurnCharacter, 5, PHYSICAL);
 
-    if (dmg > currentActionTarget->hp) {
+    if (dmg >= currentActionTarget->hp) {
         currentActionTarget->hp = 0;
+        if (!currentActionTarget->isAlly) xpGained += currentActionTarget->xp;
     } else {
         currentActionTarget->hp -= dmg;
     }
@@ -231,6 +234,7 @@ void actionFight() {
 
 inline void configureEnemy(uint8_t i, uint8_t enemyId) {
     enemyParty[i].isAlly = FALSE;
+    enemyParty[i].xp = enemyTypes[enemyId].xp;
     enemyParty[i].hp = enemyTypes[enemyId].hp;
     enemyParty[i].maxHp = enemyTypes[enemyId].hp;
     enemyParty[i].atk = enemyTypes[enemyId].atk;
