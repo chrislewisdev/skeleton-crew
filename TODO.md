@@ -1,5 +1,4 @@
 - Attack animations
-- Transition screen
 - Victory screen
 - Defeat screen
 - Fountain restoration

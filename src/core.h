@@ -19,6 +19,7 @@ typedef enum AppState {
     STATE_OUTRO,
     STATE_CREDITS,
     STATE_TRANSITION,
+    STATE_POSTBATTLE,
 } AppState;
 
 extern AppState appState;

@@ -7,6 +7,7 @@
 #include "credits.h"
 #include "battle.h"
 #include "transition.h"
+#include "postbattle.h"
 
 typedef struct StepFunction {
     uint8_t (*function)(uint8_t);
@@ -64,6 +65,9 @@ void checkStateSwitch() {
     } else if (queuedTargetState == STATE_TRANSITION) {
         stateInitTransition();
         currentStateUpdate = stateUpdateTransition;
+    } else if (queuedTargetState == STATE_POSTBATTLE) {
+        stateInitPostBattle();
+        currentStateUpdate = stateUpdatePostBattle;
     }
 
     appState = queuedTargetState;

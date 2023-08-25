@@ -392,7 +392,7 @@ inline uint8_t isBattleLost() {
 void onTurnEnd() {
     if (isBattleWon()) {
         if (triggerBossBattle)  queueStateSwitch(STATE_OUTRO);
-        else                    queueStateSwitch(STATE_EXPLORE);
+        else                    queueStateSwitch(STATE_POSTBATTLE);
     }
 
     do {
