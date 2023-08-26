@@ -25,6 +25,7 @@ typedef struct LearnedSkill {
 } LearnedSkill;
 
 typedef struct Character {
+    const char* name;
     uint8_t isAlly;
     uint8_t lvl, xp;
     uint8_t hp, maxHp;
@@ -32,8 +33,8 @@ typedef struct Character {
     uint8_t spAtk, spDef;
     uint8_t affinities[4];
     uint8_t skills[4];
-    //LearnedSkill learnedSkills[4];
-    //void (*growthFunction)(Character*);
+    LearnedSkill learnedSkills[4];
+    void (*growthFunction)(struct Character*);
 } Character;
 
 typedef struct EnemyType {
@@ -57,6 +58,7 @@ typedef struct Skill {
 } Skill;
 
 inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePower, Element element);
+uint8_t awardXp(Character* c, uint8_t xp);
 
 extern const Skill skills[SKILL_TYPE_COUNT];
 extern Character party[4];

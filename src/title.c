@@ -1,6 +1,7 @@
 #include <rand.h>
 #include "core.h"
 #include "ui.h"
+#include "rpg.h"
 #include "gen/title-screen.h"
 
 BANKREF_EXTERN(skeleton_cru)
@@ -54,9 +55,13 @@ void stateUpdateTitle() {
 
 void actionNewGame() {
     initrand(DIV_REG);
+
+    // There is almost definitely a better place to put this...
+    for (uint8_t i = 0; i < 4; i++) {
+        party[i].growthFunction(&party[i]);
+    }
+
     queueStateSwitch(STATE_INTRO);
-    // Temp code: go straight into battle for testing
-    //switchToState(STATE_BATTLE);
 }
 
 void actionCredits() {

@@ -13,6 +13,13 @@
     {.name=NAME, .hp=HP, .atk=ATK, .def=DEF, .spAtk=SPATK, .spDef=SPDEF,\
         .affinities=AFF, .skills=SKILLS, .xp=XP,\
         .metasprite=META, .tileCount=TILECOUNT, .tiles=TILES, .baseTile=0}
+#define LEARN(LVL, SKILLID) {.lvlRequired=LVL, .skillId=SKILLID}
+#define NOSKILL LEARN(0, 0)
+
+void applyZymieGrowths(Character*);
+void applyIvanGrowths(Character*);
+void applyOlafGrowths(Character*);
+void applyPierreGrowths(Character*);
 
 const Skill skills[SKILL_TYPE_COUNT] = {
     {.id = 0, .name = "Fireball"},
@@ -47,6 +54,7 @@ EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
 
 Character party[4] = {
     {
+        .name = "Zymie",
         .isAlly = TRUE,
         .lvl = 1, .xp = 0,
         .hp = 35, .maxHp = 35,
@@ -54,8 +62,11 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
+        .learnedSkills = {NOSKILL, NOSKILL, NOSKILL, NOSKILL},
+        .growthFunction = applyZymieGrowths,
     },
     {
+        .name = "Ivan",
         .isAlly = TRUE,
         .lvl = 1, .xp = 0,
         .hp = 35, .maxHp = 35,
@@ -63,8 +74,11 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
+        .learnedSkills = {NOSKILL, NOSKILL, NOSKILL, NOSKILL},
+        .growthFunction = applyIvanGrowths,
     },
     {
+        .name = "Olaf",
         .isAlly = TRUE,
         .lvl = 1, .xp = 0,
         .hp = 35, .maxHp = 35,
@@ -72,8 +86,11 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
+        .learnedSkills = {LEARN(2, 4), NOSKILL, NOSKILL, NOSKILL},
+        .growthFunction = applyOlafGrowths,
     },
     {
+        .name = "Pierre",
         .isAlly = TRUE,
         .lvl = 1, .xp = 0,
         .hp = 35, .maxHp = 35,
@@ -81,6 +98,8 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
+        .learnedSkills = {NOSKILL, NOSKILL, NOSKILL, NOSKILL},
+        .growthFunction = applyPierreGrowths,
     }
 };
 
@@ -94,63 +113,66 @@ inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePo
         withAffinity = base / 2;
     }
 
-    return (element == PHYSICAL ? withAffinity - target->def : withAffinity - target->spDef);
-}
-
-inline uint8_t getRequiredXp(uint8_t level) {
-    return level * 10 + 10;
-}
-
-inline void awardPartyXp(uint8_t xp) {
-    for (uint8_t i = 0; i < 4; i++) {
-        uint8_t xpForLevelUp = getRequiredXp(party[i].lvl);
-        party[i].xp += xp;
-        if (party[i].xp > xpForLevelUp) {
-            party[i].lvl++;
-            party[i].xp -= xpForLevelUp;
-
-            //if (i == 0)         applyZymieGrowths(&party[i]);
-            //else if (i == 1)    applyIvanGrowths(&party[i]);
-            //else if (i == 2)    applyOlafGrowths(&party[i]);
-            //else if (i == 3)    applyPierreGrowths(&party[i]);
-            //party[i].growthFunction(&party[i])
-
-            //for (uint8_t j = 0; j < 4; j++) {
-            //    if (party[i].lvl >= party[i].learnedSkills[j]) {
-            //        party[i].skills[j] = party[i].learnedSkills[j].skillId;
-            //    }
-            //}
-        }
+    if (element == PHYSICAL) {
+        return target->def >= withAffinity ? 1 : withAffinity - target->def;
+    } else {
+        return target->spDef >= withAffinity ? 1 : withAffinity - target->spDef;
     }
 }
 
+inline uint8_t getRequiredXp(uint8_t level) {
+    return level * 10;
+}
+
+uint8_t awardXp(Character* c, uint8_t xp) {
+    uint8_t xpForLevelUp = getRequiredXp(c->lvl);
+    c->xp += xp;
+
+    if (c->xp < xpForLevelUp) return 0;
+
+    c->lvl++;
+    c->xp -= xpForLevelUp;
+    c->growthFunction(c);
+
+    for (uint8_t i = 0; i < 4; i++) {
+        if (c->learnedSkills[i].lvlRequired > 0 && c->lvl >= c->learnedSkills[i].lvlRequired) {
+            c->skills[i] = c->learnedSkills[i].skillId;
+        }
+    }
+
+    return 1;
+}
+
 void applyZymieGrowths(Character* c) {
-    c->hp = 7 + c->lvl * 3;
+    c->maxHp = 7 + c->lvl * 3;
+    c->hp = c->maxHp;
     c->atk = 2 + c->lvl;
     c->def = 2 + c->lvl;
     c->spAtk = 2 + c->lvl;
     c->spDef = 2 + c->lvl;
 }
 void applyIvanGrowths(Character* c) {
-    c->hp = 8 + c->lvl * 4;
+    c->maxHp = 8 + c->lvl * 4;
+    c->hp = c->maxHp;
     c->atk = 2 + c->lvl;
     c->def = 3 + c->lvl * 2;
     c->spAtk = 2 + c->lvl;
     c->spDef = 4 + (c->lvl / 2);
 }
 void applyOlafGrowths(Character* c) {
-    c->hp = 5 + c->lvl * 2;
+    c->maxHp = 5 + c->lvl * 2;
+    c->hp = c->maxHp;
     c->atk = 1 + c->lvl;
     c->def = 2 + c->lvl;
     c->spAtk = 3 + c->lvl * 3;
     c->spDef = 5 + c->lvl * 2;
 }
 void applyPierreGrowths(Character* c) {
-    c->hp = 10 + c->lvl * 3;
+    c->maxHp = 10 + c->lvl * 3;
+    c->hp = c->maxHp;
     c->atk = 2 + c->lvl * 3;
     c->def = 2 + c->lvl;
     c->spAtk = 2 + c->lvl * 2;
     c->spDef = 2 + c->lvl;
 }
-// etc, for other characters...
 

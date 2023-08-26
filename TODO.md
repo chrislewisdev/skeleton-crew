@@ -1,8 +1,6 @@
 - Attack animations
-- Victory screen
-- Defeat screen
 - Fountain restoration
-- XP gain and level up
 - Skill usage
 - Fill out the map
 - Tweak enemy + player stats
+- Enemy encounter rate

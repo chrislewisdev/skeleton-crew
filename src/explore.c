@@ -128,7 +128,7 @@ uint8_t sfSmoothScroll(uint8_t step) {
             triggerBossBattle = TRUE;
             transitionTarget = STATE_BATTLE;
             queueStateSwitch(STATE_TRANSITION);
-        } else if (stepCounter > 15) {
+        } else if (stepCounter > 5) {
             triggerBossBattle = FALSE;
             transitionTarget = STATE_BATTLE;
             queueStateSwitch(STATE_TRANSITION);
