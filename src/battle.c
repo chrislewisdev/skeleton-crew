@@ -1,4 +1,5 @@
 #include <rand.h>
+#include "battle.h"
 #include "core.h"
 #include "ui.h"
 #include "rpg.h"
@@ -58,6 +59,7 @@ Menu primaryMenu = {
 // Public
 uint8_t triggerBossBattle = FALSE;
 uint8_t xpGained;
+BattleOutcome battleOutcome;
 
 uint8_t battleBackgroundBaseTile;
 uint8_t dmgDisplayBaseSprite;
@@ -210,7 +212,8 @@ uint8_t sfRenderDamage(uint8_t step) {
 }
 
 void actionRun() {
-    queueStateSwitch(STATE_EXPLORE);
+    battleOutcome = OUTCOME_ESCAPED;
+    queueStateSwitch(STATE_POSTBATTLE);
 }
 
 void actionExecuteAttack() {
@@ -395,8 +398,12 @@ inline uint8_t isBattleLost() {
 
 void onTurnEnd() {
     if (isBattleWon()) {
+        battleOutcome = OUTCOME_VICTORY;
         if (triggerBossBattle)  queueStateSwitch(STATE_OUTRO);
         else                    queueStateSwitch(STATE_POSTBATTLE);
+    } else if (isBattleLost()) {
+        battleOutcome = OUTCOME_DEFEAT;
+        queueStateSwitch(STATE_POSTBATTLE);
     }
 
     do {
