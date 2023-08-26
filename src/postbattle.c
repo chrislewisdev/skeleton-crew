@@ -37,8 +37,8 @@ void stateInitPostBattle() {
     notificationsSize = 0;
     shownNotificationIndex = 0;
     
-    render9slice(4, 3, 12, 10);
-    fill_bkg_rect(5, 4, 10, 8, 0);
+    render9slice(4, 3, 12, 11);
+    fill_bkg_rect(5, 4, 10, 9, 0);
 
     if (battleOutcome == OUTCOME_DEFEAT) {
         startMusic(&gameover, BANK(gameover));
@@ -57,6 +57,11 @@ void stateInitPostBattle() {
     for (uint8_t i = 0; i < 4; i++) {
         if (awardXp(&party[i], xpGained)) {
             pushNotification("Level up!", party[i].name);
+            for (uint8_t j = 0; j < 4; j++) {
+                if (party[i].learnedSkills[j].lvlRequired == party[i].lvl) {
+                    pushNotification("New skill!", skills[party[i].skills[j]].name);
+                }
+            }
         }
     }
 }
