@@ -43,13 +43,13 @@ extern const metasprite_t ghost_metasprite0;
 extern const metasprite_t spider_metasprite0;
 extern const metasprite_t boss_metasprite0;
 EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
-    ENEMY("Slime", 10, 2, 2, 1, 1, NONE, NONE, 1, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
-    ENEMY("Zombie", 7, 3, 1, 1, 0, NONE, NONE, 1, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
-    ENEMY("Harpy", 7, 3, 1, 1, 0, NONE, NONE, 5, &harpy_metasprite0, harpy_TILE_COUNT, harpy_tiles),
-    ENEMY("Skull", 7, 3, 1, 1, 0, NONE, NONE, 4, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
-    ENEMY("Ghost", 7, 3, 1, 1, 0, NONE, NONE, 3, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
-    ENEMY("Spider", 7, 3, 1, 1, 0, NONE, NONE, 3, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
-    ENEMY("Demon", 15, 5, 3, 3, 3, NONE, NONE, 0, &boss_metasprite0, boss_TILE_COUNT, boss_tiles),
+    ENEMY("Slime", 8, 3, 2, 1, 1, NONE, NONE, 3, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
+    ENEMY("Zombie", 15, 4, 1, 1, 0, NONE, NONE, 3, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
+    ENEMY("Spider", 25, 10, 6, 1, 4, NONE, NONE, 6, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
+    ENEMY("Skull", 32, 12, 4, 1, 10, NONE, NONE, 10, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
+    ENEMY("Ghost", 30, 8, 99, 1, 5, NONE, NONE, 17, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
+    ENEMY("Harpy", 50, 15, 12, 1, 12, NONE, NONE, 24, &harpy_metasprite0, harpy_TILE_COUNT, harpy_tiles),
+    ENEMY("Demon", 150, 20, 20, 20, 20, NONE, NONE, 0, &boss_metasprite0, boss_TILE_COUNT, boss_tiles),
 };
 
 Character party[4] = {

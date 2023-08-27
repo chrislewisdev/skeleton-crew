@@ -217,7 +217,7 @@ void actionRun() {
 }
 
 void actionExecuteAttack() {
-    uint8_t dmg = calculateDmg(currentActionTarget, currentTurnCharacter, 5, PHYSICAL);
+    uint8_t dmg = calculateDmg(currentActionTarget, currentTurnCharacter, 1, PHYSICAL);
 
     if (dmg >= currentActionTarget->hp) {
         currentActionTarget->hp = 0;
@@ -266,9 +266,12 @@ void generateEnemyParty() {
         enemyPartySize = 1;
         configureEnemy(0, ENEMY_TYPE_COUNT - 1);
     } else {
-        enemyPartySize = rand() % 3 + 1;
+        enemyPartySize = 2 + (rand() % 3);
+        uint8_t maxEnemyId = 2;
+        if (party[0].lvl > 2) maxEnemyId += 2;
+        if (party[0].lvl > 5) maxEnemyId += 2;
         for (uint8_t i = 0; i < enemyPartySize; i++) {
-            uint8_t enemyId = rand() % (ENEMY_TYPE_COUNT - 1);
+            uint8_t enemyId = rand() % maxEnemyId;
             configureEnemy(i, enemyId);
         }
     }

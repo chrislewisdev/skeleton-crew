@@ -15,6 +15,8 @@
 #define METAMAP_WIDTH       (metamap_WIDTH / metamap_TILE_W)
 #define METAMAP_HEIGHT      (metamap_HEIGHT / metamap_TILE_H)
 
+#define BASE_ENCOUNTER_CHANCE 15
+
 typedef struct Point { uint8_t x; uint8_t y; } Point;
 typedef struct Bounds { uint8_t left, right, top, bottom; } Bounds;
 
@@ -25,7 +27,7 @@ extern const hUGESong_t dungeon_stroll;
 
 uint8_t tilesBase;
 uint8_t zymieBaseTile, zymieBaseSprite;
-Point player = {.x = 5, .y = 4};
+Point player = {.x = 8, .y = 7};
 Point metaCamera = {.x = 0, .y = 2};
 Bounds viewport = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = META_SCREEN_HEIGHT};
 Bounds renderedMap = {.left = 0, .right = META_SCREEN_WIDTH, .top = 0, .bottom = META_SCREEN_HEIGHT};
@@ -33,6 +35,7 @@ Facing playerFacing = F_DOWN;
 uint8_t stepCounter;
 uint8_t isMoving = FALSE;
 uint8_t playerAnimationFrame = 0, stepAnimationAlternator = 0;
+uint8_t encounterChance;
 
 inline void renderMetamap(uint8_t, uint8_t);
 inline void renderColumn(uint8_t, uint8_t, uint8_t, uint8_t);
@@ -59,6 +62,10 @@ void stateInitExplore() {
     zymieBaseSprite = claimSprites(4);
 
     renderPlayer();
+    renderedMap.left = player.x - 5;
+    renderedMap.right = renderedMap.left + META_SCREEN_WIDTH;
+    renderedMap.top = player.y - 4;
+    renderedMap.bottom = renderedMap.top + META_SCREEN_HEIGHT;
     renderMetamap(renderedMap.left, renderedMap.top);
     move_bkg(8, 8);
 
@@ -71,6 +78,7 @@ void stateInitExplore() {
     SHOW_SPRITES;
 
     stepCounter = 0;
+    encounterChance = BASE_ENCOUNTER_CHANCE;
 }
 
 void stateUpdateExplore() {
@@ -101,6 +109,12 @@ void stateUpdateExplore() {
     }
 }
 
+uint8_t checkRandomEncounter() {
+    encounterChance--;
+    if (rand() % encounterChance == 0)  return 1;
+    else                                return 0;
+}
+
 uint8_t sfSmoothScroll(uint8_t step) {
     if (step < 16) {
         if (playerFacing == F_UP) {
@@ -128,7 +142,8 @@ uint8_t sfSmoothScroll(uint8_t step) {
             triggerBossBattle = TRUE;
             transitionTarget = STATE_BATTLE;
             queueStateSwitch(STATE_TRANSITION);
-        } else if (stepCounter > 5) {
+        } else if (stepCounter >= 5 && checkRandomEncounter()) {
+            encounterChance = BASE_ENCOUNTER_CHANCE;
             triggerBossBattle = FALSE;
             transitionTarget = STATE_BATTLE;
             queueStateSwitch(STATE_TRANSITION);
