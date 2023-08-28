@@ -1,7 +1,5 @@
-- Attack animations
 - Fountain restoration
-- Skill usage
+- Saving and loading???
+- Attack animations
 - Fill out the map
 - Tweak enemy + player stats
-- Enemy encounter rate
-- Saving and loading???

@@ -39,21 +39,40 @@ void renderParties();
 void generateEnemyParty();
 void actionRun();
 void actionFight();
+void actionCastSpellOne();
+void actionCastSpellTwo();
+void actionCastSpellThree();
+void actionCastSpellFour();
+void actionOpenSkillMenu();
 void updateTargeting();
 void updateTurn();
 
 MenuItem primaryMenuItems[] = {
     {.description = "Fight", .action = actionFight},
-    {.description = "Skill", .action = NULL},
-    {.description = "Item", .action = NULL},
+    {.description = "Skill", .action = actionOpenSkillMenu},
+    //{.description = "Item", .action = NULL},  // No time to implement items...
     {.description = "Run", .action = actionRun},
 };
 Menu primaryMenu = {
     .x = 0, .y = 12,
     .width = 11, .height = 6,
     .selectedIndex = 0,
-    .itemsSize = 4,
+    .itemsSize = 3,
     .items = primaryMenuItems
+};
+
+MenuItem subMenuItems[4] = {
+    {.description = NULL, .action = actionCastSpellOne},
+    {.description = NULL, .action = actionCastSpellTwo},
+    {.description = NULL, .action = actionCastSpellThree},
+    {.description = NULL, .action = actionCastSpellFour},
+};
+Menu subMenu = {
+    .x = 5, .y = 12,
+    .width = 6, .height = 6,
+    .selectedIndex = 0,
+    .itemsSize = 0,
+    .items = subMenuItems,
 };
 
 // Public
@@ -89,6 +108,7 @@ uint8_t playerHasActed = FALSE;
 void (*queuedAction)();
 uint8_t aiActionTimer = AI_ACTION_DURATION;
 uint8_t mostRecentDmgDealt = 5;
+uint8_t queuedSkillId;
 
 void initCharacterDisplayInfo() {
     partyDisplayInfo[0].visible = (party[0].hp > 0) ? TRUE : FALSE;
@@ -174,6 +194,14 @@ void stateUpdateBattle() {
             updateMenu(&primaryMenu);
         } else if (uiMode == TARGETING) {
             updateTargeting();
+        } else if (uiMode == SUB) {
+            updateMenu(&subMenu);
+
+            if (KEYPRESSED(J_B)) {
+                uiMode = PRIMARY;
+                unrenderMenu(&subMenu);
+                render9slice(primaryMenu.x, primaryMenu.y, primaryMenu.width, primaryMenu.height);
+            }
         }
     } else {
         renderCursor(0, 0);
@@ -216,8 +244,8 @@ void actionRun() {
     queueStateSwitch(STATE_POSTBATTLE);
 }
 
-void actionExecuteAttack() {
-    uint8_t dmg = calculateDmg(currentActionTarget, currentTurnCharacter, 1, PHYSICAL);
+inline void actionApplyDamage(uint8_t power, Element element) {
+    uint8_t dmg = calculateDmg(currentActionTarget, currentTurnCharacter, power, element);
 
     if (dmg >= currentActionTarget->hp) {
         currentActionTarget->hp = 0;
@@ -230,8 +258,66 @@ void actionExecuteAttack() {
     startStepFunction(sfRenderDamage);
 }
 
+void actionExecuteAttack() {
+    actionApplyDamage(1, PHYSICAL);
+}
+
 void actionFight() {
     queuedAction = actionExecuteAttack;
+    uiMode = TARGETING;
+}
+
+void actionOpenSkillMenu() {
+    uint8_t skillMenuLength = 0;
+    for (uint8_t i = 0; i < 4; i++) {
+        uint8_t skillId = currentTurnCharacter->skills[i];
+        if (skillId != 0) {
+            subMenuItems[skillMenuLength].description = skills[skillId].name;
+            skillMenuLength++;
+        }
+    }
+    subMenu.itemsSize = skillMenuLength;
+
+    if (skillMenuLength > 0) {
+        uiMode = SUB;
+        // Hack the gfx offset to stop consuming tiles on every re-render
+        uint8_t currentBkgGfxOffset = gfxTileOffset;
+        renderMenu(&subMenu);
+        gfxTileOffset = currentBkgGfxOffset;
+    }
+}
+
+void actionExecuteCast() {
+    uint8_t skillId = currentTurnCharacter->skills[queuedSkillId];
+    const Skill* skill = &skills[skillId];
+    if (skill->effect != NULL) {
+        skill->effect(currentActionTarget);
+    } else {
+        actionApplyDamage(skill->power, skill->element);
+    }
+
+    unrenderMenu(&subMenu);
+    render9slice(primaryMenu.x, primaryMenu.y, primaryMenu.width, primaryMenu.height);
+}
+
+void actionCastSpellOne() {
+    queuedAction = actionExecuteCast;
+    queuedSkillId = 0;
+    uiMode = TARGETING;
+}
+void actionCastSpellTwo() {
+    queuedAction = actionExecuteCast;
+    queuedSkillId = 1;
+    uiMode = TARGETING;
+}
+void actionCastSpellThree() {
+    queuedAction = actionExecuteCast;
+    queuedSkillId = 2;
+    uiMode = TARGETING;
+}
+void actionCastSpellFour() {
+    queuedAction = actionExecuteCast;
+    queuedSkillId = 3;
     uiMode = TARGETING;
 }
 

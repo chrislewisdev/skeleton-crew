@@ -5,7 +5,7 @@
 #include <gb/metasprites.h>
 
 #define ENEMY_TYPE_COUNT    7
-#define SKILL_TYPE_COUNT    11
+#define SKILL_TYPE_COUNT    12
 
 typedef enum Element {
     PHYSICAL,
@@ -54,7 +54,9 @@ typedef struct EnemyType {
 typedef struct Skill {
     uint8_t id;
     const char* name;
-    //void (*effect)();
+    Element element;
+    uint8_t power;
+    void (*effect)(Character* target);
 } Skill;
 
 inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePower, Element element);

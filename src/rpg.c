@@ -21,18 +21,31 @@ void applyIvanGrowths(Character*);
 void applyOlafGrowths(Character*);
 void applyPierreGrowths(Character*);
 
+void applyWeaken(Character* target) {
+    if (target->atk > 3) target->atk -= 3;
+}
+void applySoften(Character* target) {
+    if (target->def > 3) target->def -= 3;
+    // SpDef?
+}
+void applyHeal(Character* target) {
+    target->hp += 20;
+    if (target->hp > target->maxHp) target->hp = target->maxHp;
+}
+
 const Skill skills[SKILL_TYPE_COUNT] = {
-    {.id = 0, .name = "Fireball"},
-    {.id = 1, .name = "Gust"},
-    {.id = 2, .name = "Rain"},
-    {.id = 3, .name = "Heal"},
-    {.id = 4, .name = "Blast"},
-    {.id = 5, .name = "Cyclone"},
-    {.id = 6, .name = "Downpour"},
-    {.id = 7, .name = "Mega Punch"},
-    {.id = 8, .name = "Weaken"},
-    {.id = 9, .name = "Soften"},
-    {.id = 10, .name = "Fast Kick"}
+    {.id = 0, .name = ""}, //Empty skill
+    {.id = 1, .name = "Fireball", .element = FIRE, .power = 5, .effect = NULL},
+    {.id = 2, .name = "Gust", .element = WIND, .power = 5, .effect = NULL},
+    {.id = 3, .name = "Rain", .element = WATER, .power = 5, .effect = NULL},
+    {.id = 4, .name = "Heal", .effect = applyHeal},
+    {.id = 5, .name = "Blast", .element = FIRE, .power = 10, .effect = NULL},
+    {.id = 6, .name = "Cyclone", .element = WIND, .power = 10, .effect = NULL},
+    {.id = 7, .name = "Downpour", .element = WATER, .power = 10, .effect = NULL},
+    {.id = 8, .name = "Mega Punch", .element = PHYSICAL, .power = 10, .effect = NULL},
+    {.id = 9, .name = "Weaken", .effect = applyWeaken},
+    {.id = 10, .name = "Soften", .effect = applySoften},
+    {.id = 11, .name = "Fast Kick", .element = PHYSICAL, .power = 5, .effect = NULL}
 };
 
 extern const metasprite_t zombie_metasprite0;
@@ -45,10 +58,10 @@ extern const metasprite_t boss_metasprite0;
 EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
     ENEMY("Slime", 8, 3, 2, 1, 1, NONE, NONE, 3, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
     ENEMY("Zombie", 15, 4, 1, 1, 0, NONE, NONE, 3, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
-    ENEMY("Spider", 25, 10, 6, 1, 4, NONE, NONE, 6, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
-    ENEMY("Skull", 32, 12, 4, 1, 10, NONE, NONE, 10, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
+    ENEMY("Spider", 25, 7, 4, 1, 4, NONE, NONE, 6, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
+    ENEMY("Skull", 32, 7, 3, 1, 10, NONE, NONE, 10, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
     ENEMY("Ghost", 30, 8, 99, 1, 5, NONE, NONE, 17, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
-    ENEMY("Harpy", 50, 15, 12, 1, 12, NONE, NONE, 24, &harpy_metasprite0, harpy_TILE_COUNT, harpy_tiles),
+    ENEMY("Harpy", 50, 10, 8, 1, 12, NONE, NONE, 24, &harpy_metasprite0, harpy_TILE_COUNT, harpy_tiles),
     ENEMY("Demon", 150, 20, 20, 20, 20, NONE, NONE, 0, &boss_metasprite0, boss_TILE_COUNT, boss_tiles),
 };
 
@@ -86,7 +99,7 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
-        .learnedSkills = {LEARN(2, 4), NOSKILL, NOSKILL, NOSKILL},
+        .learnedSkills = {LEARN(2, 1), NOSKILL, NOSKILL, NOSKILL},
         .growthFunction = applyOlafGrowths,
     },
     {
@@ -146,8 +159,8 @@ uint8_t awardXp(Character* c, uint8_t xp) {
 void applyZymieGrowths(Character* c) {
     c->maxHp = 7 + c->lvl * 3;
     c->hp = c->maxHp;
-    c->atk = 2 + c->lvl;
-    c->def = 2 + c->lvl;
+    c->atk = 4 + c->lvl;
+    c->def = 5 + c->lvl;
     c->spAtk = 2 + c->lvl;
     c->spDef = 2 + c->lvl;
 }
@@ -164,13 +177,13 @@ void applyOlafGrowths(Character* c) {
     c->hp = c->maxHp;
     c->atk = 1 + c->lvl;
     c->def = 2 + c->lvl;
-    c->spAtk = 3 + c->lvl * 3;
+    c->spAtk = 3 + c->lvl * 2;
     c->spDef = 5 + c->lvl * 2;
 }
 void applyPierreGrowths(Character* c) {
     c->maxHp = 10 + c->lvl * 3;
     c->hp = c->maxHp;
-    c->atk = 2 + c->lvl * 3;
+    c->atk = 2 + c->lvl * 2;
     c->def = 2 + c->lvl;
     c->spAtk = 2 + c->lvl * 2;
     c->spDef = 2 + c->lvl;

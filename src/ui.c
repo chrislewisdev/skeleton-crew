@@ -63,7 +63,7 @@ inline void renderNumberAsSprite(uint8_t x, uint8_t y, uint8_t baseSprite, uint8
     set_sprite_tile(baseSprite + 1, baseNumbersTile + onesDigit);
     move_sprite(baseSprite + 1, x + 8, y);
 
-    if (value > 10) {
+    if (value >= 10) {
         uint8_t tensDigit = value / 10;
         set_sprite_tile(baseSprite, baseNumbersTile + tensDigit);
         move_sprite(baseSprite, x, y);
@@ -71,32 +71,25 @@ inline void renderNumberAsSprite(uint8_t x, uint8_t y, uint8_t baseSprite, uint8
 }
 
 void renderMenu(Menu *menu) {
-    uint8_t x = menu->x;
-    uint8_t y = menu->y;
-    uint8_t width = menu->width;
-    uint8_t height = menu->height;
-
-    render9slice(x, y, width, height);
+    render9slice(menu->x, menu->y, menu->width, menu->height);
     
     // Render items
     for (uint8_t i = 0; i < menu->itemsSize; i++) {
-       renderText(x + 1, y + i + 1, menu->items[i].description);
+       renderText(menu->x + 1, menu->y + i + 1, menu->items[i].description);
     }
 }
 
-//void unrenderMenu(Menu *menu) {
-//    for (uint8_t x = menu->x; x < menu->x + menu->width; x++) {
-//        for (uint8_t y = menu->y; y < menu->y + menu->height; y++) {
-//            set_bkg_tile_xy(x, y, 0);
-//        }
-//    }
-//}
+void unrenderMenu(Menu *menu) {
+    fill_bkg_rect(menu->x, menu->y, menu->width, menu->height, 0);
+}
 
 inline void renderCursor(uint8_t x, uint8_t y) {
     move_sprite(cursorSprite, x, y);
 }
 
 void updateMenu(Menu* menu) {
+    if (menu->selectedIndex >= menu->itemsSize) menu->selectedIndex = menu->itemsSize - 1;
+
     // Cursor controls
     if (KEYPRESSED(J_UP) && menu->selectedIndex > 0) {
         menu->selectedIndex--;
