@@ -37,8 +37,8 @@ void stateInitPostBattle() {
     notificationsSize = 0;
     shownNotificationIndex = 0;
     
-    render9slice(4, 3, 12, 11);
-    fill_bkg_rect(5, 4, 10, 9, 0);
+    render9slice(3, 3, 14, 11);
+    fill_bkg_rect(4, 4, 12, 9, 0);
 
     if (battleOutcome == OUTCOME_DEFEAT) {
         startMusic(&gameover, BANK(gameover));

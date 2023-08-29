@@ -55,7 +55,7 @@ MenuItem primaryMenuItems[] = {
 };
 Menu primaryMenu = {
     .x = 0, .y = 12,
-    .width = 11, .height = 6,
+    .width = 12, .height = 6,
     .selectedIndex = 0,
     .itemsSize = 3,
     .items = primaryMenuItems
@@ -69,7 +69,7 @@ MenuItem subMenuItems[4] = {
 };
 Menu subMenu = {
     .x = 5, .y = 12,
-    .width = 6, .height = 6,
+    .width = 7, .height = 6,
     .selectedIndex = 0,
     .itemsSize = 0,
     .items = subMenuItems,
@@ -364,22 +364,22 @@ void generateEnemyParty() {
 }
 
 void renderStatusDisplay() {
-    renderText(12, 13, "Zymie:"); //renderText(16, 13, "45/45");
-    renderNumber(16, 13, party[0].hp);
-    renderText(12, 14, "Ivan:"); //renderText(16, 14, "52/52");
-    renderNumber(16, 14, party[1].hp);
-    renderText(12, 15, "Olaf:"); //renderText(16, 15, "35/35");
-    renderNumber(16, 15, party[2].hp);
-    renderText(12, 16, "Pierre:"); //renderText(16, 16, "14/63");
-    renderNumber(16, 16, party[3].hp);
-    render9slice(11, 12, 9, 6);
+    renderText(13, 13, "Zymie:"); //renderText(16, 13, "45/45");
+    renderNumber(17, 13, party[0].hp);
+    renderText(13, 14, "Ivan:"); //renderText(16, 14, "52/52");
+    renderNumber(17, 14, party[1].hp);
+    renderText(13, 15, "Olaf:"); //renderText(16, 15, "35/35");
+    renderNumber(17, 15, party[2].hp);
+    renderText(13, 16, "Pierre:"); //renderText(16, 16, "14/63");
+    renderNumber(17, 16, party[3].hp);
+    render9slice(12, 12, 8, 6);
 }
 
 void updateStatusDisplay() {
-    renderNumber(16, 13, party[0].hp);
-    renderNumber(16, 14, party[1].hp);
-    renderNumber(16, 15, party[2].hp);
-    renderNumber(16, 16, party[3].hp);
+    renderNumber(17, 13, party[0].hp);
+    renderNumber(17, 14, party[1].hp);
+    renderNumber(17, 15, party[2].hp);
+    renderNumber(17, 16, party[3].hp);
 }
 
 void renderParties() {
