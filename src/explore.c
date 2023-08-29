@@ -1,3 +1,5 @@
+#pragma bank 1
+
 #include "core.h"
 #include "hUGEDriver.h"
 #include "battle.h"
@@ -50,7 +52,6 @@ void stateInitExplore() {
     HIDE_BKG;
     HIDE_SPRITES;
     hide_sprites_range(0, MAX_HARDWARE_SPRITES);
-    SWITCH_ROM(1);
 
     releaseAllBkgGfx();
     releaseAllObjGfx();
