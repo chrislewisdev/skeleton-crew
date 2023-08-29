@@ -1,4 +1,5 @@
 - Fountain restoration
+- Make 'run' chance-based
 - Saving and loading???
 - Attack animations
 - Fill out the map
