@@ -8,6 +8,7 @@
 #include "battle.h"
 #include "transition.h"
 #include "postbattle.h"
+#include "fountain.h"
 
 typedef struct StepFunction {
     uint8_t (*function)(uint8_t);
@@ -68,6 +69,9 @@ void checkStateSwitch() {
     } else if (queuedTargetState == STATE_POSTBATTLE) {
         stateInitPostBattle();
         currentStateUpdate = stateUpdatePostBattle;
+    } else if (queuedTargetState == STATE_FOUNTAIN) {
+        stateInitFountain();
+        currentStateUpdate = stateUpdateFountain;
     }
 
     appState = queuedTargetState;

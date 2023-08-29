@@ -16,6 +16,7 @@ typedef struct Menu {
 
 void initUi();
 inline void render9slice(uint8_t x, uint8_t y, uint8_t width, uint8_t height); 
+inline void render9sliceToWindow(uint8_t x, uint8_t y, uint8_t width, uint8_t height); 
 inline void renderText(uint8_t x, uint8_t y, const char *text);
 inline void renderNumber(uint8_t x, uint8_t y, uint8_t value);
 inline void renderNumberAsSprite(uint8_t x, uint8_t y, uint8_t baseSprite, uint8_t value);

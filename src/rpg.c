@@ -136,6 +136,18 @@ inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePo
     }
 }
 
+void applyLvlsToParty() {
+    for (uint8_t i = 0; i < 4; i++) {
+        party[i].growthFunction(&party[i]);
+
+        for (uint8_t j = 0; j < 4; j++) {
+            if (party[i].learnedSkills[j].lvlRequired > 0 && party[i].lvl >= party[i].learnedSkills[j].lvlRequired) {
+                party[i].skills[j] = party[i].learnedSkills[j].skillId;
+            }
+        }
+    }
+}
+
 inline uint8_t getRequiredXp(uint8_t level) {
     return level * 10;
 }

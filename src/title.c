@@ -2,17 +2,20 @@
 #include "core.h"
 #include "ui.h"
 #include "rpg.h"
+#include "save.h"
+#include "explore.h"
 #include "gen/title-screen.h"
 
 BANKREF_EXTERN(skeleton_cru)
 extern hUGESong_t skeleton_cru;
 
 void actionNewGame();
+void actionLoadGame();
 void actionCredits();
 
 const MenuItem mainMenuItems[] = {
     {.description = "New game", .action = actionNewGame},
-    {.description = "Load game", .action = NULL},
+    {.description = "Load game", .action = actionLoadGame},
     {.description = "Credits", .action = actionCredits},
 };
 Menu mainMenu = {
@@ -60,8 +63,17 @@ void actionNewGame() {
     for (uint8_t i = 0; i < 4; i++) {
         party[i].growthFunction(&party[i]);
     }
+    player.x = 8; player.y = 7;
 
     queueStateSwitch(STATE_INTRO);
+}
+
+void actionLoadGame() {
+    ENABLE_RAM_MBC5;
+    if (hasSaveData()) {
+        loadData();
+        queueStateSwitch(STATE_EXPLORE);
+    }
 }
 
 void actionCredits() {

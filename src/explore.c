@@ -1,9 +1,12 @@
 #pragma bank 1
 
+#include "explore.h"
 #include "core.h"
 #include "hUGEDriver.h"
 #include "battle.h"
 #include "transition.h"
+#include "ui.h"
+#include "vwf.h"
 #include "gen/tiles.h"
 #include "gen/metamap.h"
 #include "gen/zymie.h"
@@ -19,7 +22,6 @@
 
 #define BASE_ENCOUNTER_CHANCE 15
 
-typedef struct Point { uint8_t x; uint8_t y; } Point;
 typedef struct Bounds { uint8_t left, right, top, bottom; } Bounds;
 
 typedef enum Facing { F_UP, F_DOWN, F_LEFT, F_RIGHT } Facing;
@@ -58,6 +60,7 @@ void stateInitExplore() {
     releaseAllSharedGfx();
     releaseAllSprites();
 
+    initUi();
     tilesBase = claimBkgGfx(tiles_TILE_COUNT, tiles_tiles);
     zymieBaseTile = claimObjGfx(zymie_TILE_COUNT, zymie_tiles);
     zymieBaseSprite = claimSprites(4);
@@ -80,6 +83,26 @@ void stateInitExplore() {
 
     stepCounter = 0;
     encounterChance = BASE_ENCOUNTER_CHANCE;
+}
+
+inline uint8_t getFacedTile() {
+    uint8_t x = player.x, y = player.y;
+    if (playerFacing == F_UP) {
+        y -= 1;
+    } else if (playerFacing == F_DOWN) {
+        y += 1;
+    } else if (playerFacing == F_LEFT) {
+        x -= 1;
+    } else if (playerFacing == F_RIGHT) {
+        x += 1;
+    }
+    return getMetaTile(x, y);
+}
+
+void tryInteract(uint8_t tileId) {
+    if (tileId == 3) {
+        queueStateSwitch(STATE_FOUNTAIN);
+    }
 }
 
 void stateUpdateExplore() {
@@ -107,6 +130,9 @@ void stateUpdateExplore() {
             move(F_RIGHT);
         }
         renderPlayer();
+    } else if (KEYDOWN(J_A)) {
+        uint8_t tileId = getFacedTile();
+        tryInteract(tileId);
     }
 }
 

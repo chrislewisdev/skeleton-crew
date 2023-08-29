@@ -43,6 +43,26 @@ inline void render9slice(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
     set_bkg_tile_xy(x + width - 1, y + height - 1, baseNineSliceTile + 7);
 }
 
+inline void render9sliceToWindow(uint8_t x, uint8_t y, uint8_t width, uint8_t height) {
+    // Top edge
+    set_win_tile_xy(x, y, baseNineSliceTile);
+    for (uint8_t tx = x + 1; tx < x + width - 1; tx++) {
+        set_win_tile_xy(tx, y, baseNineSliceTile + 1);
+    }
+    set_win_tile_xy(x + width - 1, y, baseNineSliceTile + 2);
+    // Left-right edges
+    for (uint8_t ty = y + 1; ty < y + height - 1; ty++) {
+        set_win_tile_xy(x, ty, baseNineSliceTile + 3);
+        set_win_tile_xy(x + width - 1, ty, baseNineSliceTile + 4);
+    }
+    // Bottom edge
+    set_win_tile_xy(x, y + height - 1, baseNineSliceTile + 5);
+    for (uint8_t tx = x + 1; tx < x + width - 1; tx++) {
+        set_win_tile_xy(tx, y + height - 1, baseNineSliceTile + 6);
+    }
+    set_win_tile_xy(x + width - 1, y + height - 1, baseNineSliceTile + 7);
+}
+
 inline void renderText(uint8_t x, uint8_t y, const char *text) {
     // TODO: We should pre-render and re-use common text where appropriate
     // (e.g. menus) - not sure how to do this yet

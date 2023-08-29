@@ -61,6 +61,7 @@ typedef struct Skill {
 
 inline uint8_t calculateDmg(Character* target, Character* origin, uint8_t basePower, Element element);
 uint8_t awardXp(Character* c, uint8_t xp);
+void applyLvlsToParty();
 
 extern const Skill skills[SKILL_TYPE_COUNT];
 extern Character party[4];
