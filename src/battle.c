@@ -14,7 +14,7 @@
 #define ENEMY_LINE_X    110
 #define STANDOUT_X      24
 
-#define AI_ACTION_DURATION  80
+#define AI_ACTION_DURATION  40
 
 typedef struct CharacterDisplayInfo {
     uint8_t visible;
@@ -99,16 +99,27 @@ Character* turnOrder[8] = {
     &party[3],
     &enemyParty[3]
 };
+CharacterDisplayInfo* turnOrderDisplayInfo[8] = {
+    &partyDisplayInfo[0],
+    &enemyDisplayInfo[0],
+    &partyDisplayInfo[1],
+    &enemyDisplayInfo[1],
+    &partyDisplayInfo[2],
+    &enemyDisplayInfo[2],
+    &partyDisplayInfo[3],
+    &enemyDisplayInfo[3],
+};
 uint8_t turnOrderSize = 8;
 uint8_t turnOrderIndex = 0;
 Character* currentTurnCharacter = &party[0];
 Character* currentActionTarget = NULL;
-CharacterDisplayInfo* currentActionTargetDisplayInfo = NULL;
+CharacterDisplayInfo *currentTurnCharacterDisplayInfo = NULL, *currentActionTargetDisplayInfo = NULL;
 uint8_t playerHasActed = FALSE;
 void (*queuedAction)();
 uint8_t aiActionTimer = AI_ACTION_DURATION;
 uint8_t mostRecentDmgDealt = 5;
 uint8_t queuedSkillId;
+uint8_t isAnimating = 0;
 
 void initCharacterDisplayInfo() {
     partyDisplayInfo[0].visible = (party[0].hp > 0) ? TRUE : FALSE;
@@ -182,14 +193,16 @@ void stateInitBattle() {
 
     turnOrderIndex = 0;
     currentTurnCharacter = &party[0];
+    currentTurnCharacterDisplayInfo = &partyDisplayInfo[0];
     targetingIndex = 0;
+    isAnimating = 0;
 
     SHOW_BKG;
     SHOW_SPRITES;
 }
 
 void stateUpdateBattle() {
-    if (currentTurnCharacter->isAlly) {
+    if (currentTurnCharacter->isAlly && !isAnimating) {
         if (uiMode == PRIMARY) {
             updateMenu(&primaryMenu);
         } else if (uiMode == TARGETING) {
@@ -411,6 +424,32 @@ void renderParties() {
     }
 }
 
+uint8_t sfAnimateAttack(uint8_t step) {
+    isAnimating = TRUE;
+
+    if (currentTurnCharacterDisplayInfo->y < currentActionTargetDisplayInfo->y) {
+        currentTurnCharacterDisplayInfo->y += 2;
+    } else if (currentTurnCharacterDisplayInfo->y > currentActionTargetDisplayInfo->y) {
+        currentTurnCharacterDisplayInfo->y -= 2;
+    }
+    if (currentTurnCharacter->isAlly && currentTurnCharacterDisplayInfo->x < ENEMY_LINE_X - STANDOUT_X) {
+        currentTurnCharacterDisplayInfo->x += 2;
+    } else if (!currentTurnCharacter->isAlly && currentTurnCharacterDisplayInfo->x > PARTY_LINE_X + STANDOUT_X) {
+        currentTurnCharacterDisplayInfo->x -= 2;
+    }
+
+    renderParties();
+
+    if (step < 60) return 0;
+    
+    queuedAction();
+    //playerHasActed = TRUE;
+    updatePartyDisplayInfo();
+    onTurnEnd();
+    isAnimating = FALSE;
+    return 1;
+}
+
 void updateTargeting() {
     uint8_t minAliveEnemyIndex = 0;
     uint8_t maxAliveEnemyIndex = enemyPartySize - 1;
@@ -442,8 +481,9 @@ void updateTargeting() {
     if (KEYPRESSED(J_A)) {
         currentActionTarget = &enemyParty[targetingIndex];
         currentActionTargetDisplayInfo = &enemyDisplayInfo[targetingIndex];
-        queuedAction();
-        playerHasActed = TRUE;
+        //queuedAction();
+        startStepFunction(sfAnimateAttack);
+        //playerHasActed = TRUE;
         uiMode = PRIMARY;
     } else if (KEYPRESSED(J_B)) {
         uiMode = PRIMARY;
@@ -455,6 +495,7 @@ void updateTargeting() {
 void updatePartyDisplayInfo() {
     for (uint8_t i = 0; i < 4; i++) {
         partyDisplayInfo[i].visible = (party[i].hp > 0) ? TRUE : FALSE;
+        partyDisplayInfo[i].y = 32 + i * 20;
         if (currentTurnCharacter == &party[i]) {
             partyDisplayInfo[i].x = PARTY_LINE_X + STANDOUT_X;
         } else {
@@ -463,6 +504,7 @@ void updatePartyDisplayInfo() {
     }
     for (uint8_t i = 0; i < 4; i++) {
         enemyDisplayInfo[i].visible = (enemyParty[i].hp > 0) ? TRUE : FALSE;
+        enemyDisplayInfo[i].y = 32 + i * 20;
         if (currentTurnCharacter == &enemyParty[i]) {
             enemyDisplayInfo[i].x = ENEMY_LINE_X - STANDOUT_X;
         } else {
@@ -502,6 +544,7 @@ void onTurnEnd() {
         }
     } while (turnOrder[turnOrderIndex]->hp == 0);
     currentTurnCharacter = turnOrder[turnOrderIndex];
+    currentTurnCharacterDisplayInfo = turnOrderDisplayInfo[turnOrderIndex];
 
     updatePartyDisplayInfo();
     renderParties();
@@ -509,25 +552,26 @@ void onTurnEnd() {
 }
 
 void updateTurn() {
-    if (!currentTurnCharacter->isAlly) {
+    if (!currentTurnCharacter->isAlly && !isAnimating) {
         if (aiActionTimer == 0) {
-            // TODO: Make sure they only target alive characters!
             uint8_t targetIndex = rand() % 4;
+            // Make sure the target is alive
             while (party[targetIndex].hp == 0) targetIndex = rand() % 4;
             currentActionTarget = &party[targetIndex];
             currentActionTargetDisplayInfo = &partyDisplayInfo[targetIndex];
-            actionExecuteAttack();
-            onTurnEnd();
+            queuedAction = actionExecuteAttack;
+            startStepFunction(sfAnimateAttack);
+            //onTurnEnd();
             aiActionTimer = AI_ACTION_DURATION;
         } else {
             aiActionTimer--;
         }
     } else {
         // Wait for the player to act
-        if (playerHasActed) {
-            onTurnEnd();
-            playerHasActed = FALSE;
-        }
+        //if (playerHasActed) {
+        //    onTurnEnd();
+        //    playerHasActed = FALSE;
+        //}
     }
 }
 

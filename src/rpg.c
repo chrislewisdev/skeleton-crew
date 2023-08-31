@@ -78,7 +78,7 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
-        .learnedSkills = {LEARN(3, 2), LEARN(7, 4), LEARN(10, 6), NOSKILL}, // Gust, Heal, Cyclone
+        .learnedSkills = {LEARN(3, 2), LEARN(7, 6), NOSKILL, NOSKILL}, // Gust, Cyclone
         .growthFunction = applyZymieGrowths,
     },
     {
@@ -90,7 +90,7 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
-        .learnedSkills = {LEARN(5, 3), LEARN(9, 7), LEARN(12, 10), NOSKILL}, // Rain, Downpour, Soften
+        .learnedSkills = {LEARN(5, 3), LEARN(9, 7), LEARN(11, 10), NOSKILL}, // Rain, Downpour, Soften
         .growthFunction = applyIvanGrowths,
     },
     {
@@ -114,7 +114,7 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
-        .learnedSkills = {LEARN(6, 11), LEARN(11, 8), NOSKILL, NOSKILL}, // Roundhouse, Mega Punch
+        .learnedSkills = {LEARN(6, 11), LEARN(10, 8), NOSKILL, NOSKILL}, // Roundhouse, Mega Punch
         .growthFunction = applyPierreGrowths,
     }
 };
