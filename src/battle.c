@@ -513,6 +513,7 @@ void updateTurn() {
         if (aiActionTimer == 0) {
             // TODO: Make sure they only target alive characters!
             uint8_t targetIndex = rand() % 4;
+            while (party[targetIndex].hp == 0) targetIndex = rand() % 4;
             currentActionTarget = &party[targetIndex];
             currentActionTargetDisplayInfo = &partyDisplayInfo[targetIndex];
             actionExecuteAttack();
