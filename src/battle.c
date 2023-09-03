@@ -530,8 +530,7 @@ inline uint8_t isBattleLost() {
 void onTurnEnd() {
     if (isBattleWon()) {
         battleOutcome = OUTCOME_VICTORY;
-        if (triggerBossBattle)  queueStateSwitch(STATE_OUTRO);
-        else                    queueStateSwitch(STATE_POSTBATTLE);
+        queueStateSwitch(STATE_POSTBATTLE);
     } else if (isBattleLost()) {
         battleOutcome = OUTCOME_DEFEAT;
         queueStateSwitch(STATE_POSTBATTLE);

@@ -1,6 +1,9 @@
 #include "core.h"
 #include "ui.h"
 
+BANKREF_EXTERN(gold_star)
+extern hUGESong_t gold_star;
+
 const char *outroText = \
 "The tyrannical demon defeated,\n\
 our four heroes sought to\n\
@@ -20,6 +23,7 @@ void stateInitOutro() {
     stopMusic();
     releaseAllBkgGfx();
     fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0x00u);
+    startMusic(&gold_star, BANK(gold_star));
     SHOW_BKG;
     renderText(1, 1, outroText);
 }

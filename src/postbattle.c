@@ -79,6 +79,8 @@ void stateUpdatePostBattle() {
         if (KEYPRESSED(J_A)) {
             if (battleOutcome == OUTCOME_DEFEAT)
                 queueStateSwitch(STATE_TITLE);
+            else if (triggerBossBattle)
+                queueStateSwitch(STATE_OUTRO);
             else
                 queueStateSwitch(STATE_EXPLORE);
         }
