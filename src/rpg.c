@@ -59,11 +59,11 @@ extern const metasprite_t ghost_metasprite0;
 extern const metasprite_t spider_metasprite0;
 extern const metasprite_t boss_metasprite0;
 EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
-    ENEMY("Slime", 8, 3, 2, 1, 1, WEAK2WIND, NONE, 3, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
-    ENEMY("Zombie", 15, 4, 1, 1, 0, WEAK2FIRE, NONE, 3, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
-    ENEMY("Spider", 25, 9, 4, 1, 4, WEAK2FIRE, NONE, 6, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
-    ENEMY("Skull", 32, 8, 3, 1, 10, WEAK2WATER, NONE, 8, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
-    ENEMY("Ghost", 30, 12, 99, 1, 3, WEAK2WIND, NONE, 20, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
+    ENEMY("Slime", 8, 3, 2, 1, 1, WEAK2WIND, NONE, 4, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
+    ENEMY("Zombie", 15, 4, 1, 1, 0, WEAK2FIRE, NONE, 4, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
+    ENEMY("Spider", 25, 9, 4, 1, 4, WEAK2FIRE, NONE, 7, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
+    ENEMY("Skull", 32, 8, 3, 1, 10, WEAK2WATER, NONE, 10, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
+    ENEMY("Ghost", 30, 12, 99, 1, 3, WEAK2WIND, NONE, 18, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
     ENEMY("Harpy", 50, 15, 8, 1, 10, WEAK2WATER, NONE, 24, &harpy_metasprite0, harpy_TILE_COUNT, harpy_tiles),
     ENEMY("Demon", 150, 20, 12, 20, 12, NONE, NONE, 0, &boss_metasprite0, boss_TILE_COUNT, boss_tiles),
 };
@@ -78,7 +78,7 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
-        .learnedSkills = {LEARN(3, 2), LEARN(7, 6), NOSKILL, NOSKILL}, // Gust, Cyclone
+        .learnedSkills = {LEARN(5, 2), LEARN(7, 6), NOSKILL, NOSKILL}, // Gust, Cyclone
         .growthFunction = applyZymieGrowths,
     },
     {
@@ -90,7 +90,7 @@ Character party[4] = {
         .spAtk = 1, .spDef = 1,
         .affinities = NONE,
         .skills = NONE,
-        .learnedSkills = {LEARN(5, 3), LEARN(9, 7), LEARN(11, 10), NOSKILL}, // Rain, Downpour, Soften
+        .learnedSkills = {LEARN(3, 3), LEARN(9, 7), LEARN(11, 10), NOSKILL}, // Rain, Downpour, Soften
         .growthFunction = applyIvanGrowths,
     },
     {

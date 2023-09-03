@@ -79,7 +79,7 @@ void stateUpdatePostBattle() {
         if (KEYPRESSED(J_A)) {
             if (battleOutcome == OUTCOME_DEFEAT)
                 queueStateSwitch(STATE_TITLE);
-            else if (triggerBossBattle)
+            else if (triggerBossBattle && battleOutcome == OUTCOME_VICTORY)
                 queueStateSwitch(STATE_OUTRO);
             else
                 queueStateSwitch(STATE_EXPLORE);
