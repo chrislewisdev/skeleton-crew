@@ -143,15 +143,15 @@ uint8_t checkRandomEncounter() {
 }
 
 uint8_t sfSmoothScroll(uint8_t step) {
-    if (step < 16) {
+    if (step < 16 && step % 2 == 0) {
         if (playerFacing == F_UP) {
-            scroll_bkg(0, -1);
+            scroll_bkg(0, -2);
         } else if (playerFacing == F_DOWN) {
-            scroll_bkg(0, 1);
+            scroll_bkg(0, 2);
         } else if (playerFacing == F_LEFT) {
-            scroll_bkg(-1, 0);
+            scroll_bkg(-2, 0);
         } else if (playerFacing == F_RIGHT) {
-            scroll_bkg(1, 0);
+            scroll_bkg(2, 0);
         }
     }
 

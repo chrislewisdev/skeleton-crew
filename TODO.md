@@ -1,3 +1,2 @@
 - Make 'run' chance-based
-- Attack animations
 - Tweak enemy + player stats

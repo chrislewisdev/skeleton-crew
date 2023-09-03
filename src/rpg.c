@@ -65,7 +65,7 @@ EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
     ENEMY("Skull", 32, 8, 3, 1, 10, WEAK2WATER, NONE, 8, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
     ENEMY("Ghost", 30, 12, 99, 1, 3, WEAK2WIND, NONE, 20, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
     ENEMY("Harpy", 50, 15, 8, 1, 10, WEAK2WATER, NONE, 24, &harpy_metasprite0, harpy_TILE_COUNT, harpy_tiles),
-    ENEMY("Demon", 150, 20, 20, 20, 20, NONE, NONE, 0, &boss_metasprite0, boss_TILE_COUNT, boss_tiles),
+    ENEMY("Demon", 150, 20, 12, 20, 12, NONE, NONE, 0, &boss_metasprite0, boss_TILE_COUNT, boss_tiles),
 };
 
 Character party[4] = {
@@ -176,7 +176,7 @@ void applyZymieGrowths(Character* c) {
     c->hp = c->maxHp;
     c->atk = 4 + c->lvl;
     c->def = 5 + c->lvl;
-    c->spAtk = 2 + c->lvl;
+    c->spAtk = 6 + c->lvl;
     c->spDef = 2 + c->lvl;
 }
 void applyIvanGrowths(Character* c) {
@@ -184,7 +184,7 @@ void applyIvanGrowths(Character* c) {
     c->hp = c->maxHp;
     c->atk = 2 + c->lvl;
     c->def = 3 + c->lvl * 2;
-    c->spAtk = 2 + c->lvl;
+    c->spAtk = 5 + c->lvl;
     c->spDef = 4 + (c->lvl / 2);
 }
 void applyOlafGrowths(Character* c) {

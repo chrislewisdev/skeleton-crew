@@ -59,8 +59,14 @@ void stateUpdateTitle() {
 void actionNewGame() {
     initrand(DIV_REG);
 
-    // There is almost definitely a better place to put this...
+    // There is definitely a better place to put this...
     for (uint8_t i = 0; i < 4; i++) {
+        party[i].lvl = 1;
+        party[i].xp = 0;
+        party[i].skills[0] = 0;
+        party[i].skills[1] = 0;
+        party[i].skills[2] = 0;
+        party[i].skills[3] = 0;
         party[i].growthFunction(&party[i]);
     }
     player.x = 8; player.y = 7;
