@@ -26,12 +26,10 @@ const uint8_t palettes[] = {
     DMG_PALETTE(DMG_WHITE, DMG_LITE_GRAY, DMG_DARK_GRAY, DMG_BLACK),
 };
 
-uint8_t cutoff = 8;
 uint8_t advanceTimer = LINE_DURATION;
 
 void onScanlineInterrupt() {
-    if (LY_REG < cutoff)    BGP_REG = palettes[3];
-    else                    BGP_REG = palettes[0];
+    BGP_REG = palettes[0];
 }
 
 void stateInitOutro() {
@@ -41,25 +39,25 @@ void stateInitOutro() {
     releaseAllBkgGfx();
     fill_bkg_rect(0, 0, DEVICE_SCREEN_WIDTH, DEVICE_SCREEN_HEIGHT, 0x00u);
     startMusic(&gold_star, BANK(gold_star));
-    renderText(1, 1, outroText);
     BGP_REG = palettes[0];
+    renderText(1, 1, outroText);
     SHOW_BKG;
 
     CRITICAL {
-        STAT_REG = STATF_MODE00;
+        STAT_REG = STATF_LYC;
         add_LCD(onScanlineInterrupt);
-        add_LCD(nowait_int_handler);
     }
+    LYC_REG = 8;
     set_interrupts(VBL_IFLAG | LCD_IFLAG);
 }
 
 void stateUpdateOutro() {
-    if (cutoff < 144) {
+    if (LYC_REG < 144) {
         if (--advanceTimer == 0) {
-            cutoff += 8;
+            LYC_REG += 8;
             advanceTimer = LINE_DURATION;
         }
-        if (cutoff >= 144) set_interrupts(VBL_IFLAG);
+        if (LYC_REG >= 144) set_interrupts(VBL_IFLAG);
         BGP_REG = palettes[3];
     }
 }
