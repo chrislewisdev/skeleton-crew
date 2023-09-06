@@ -44,8 +44,8 @@ const Skill skills[SKILL_TYPE_COUNT] = {
     {.id = 4, .name = "Heal", .effect = applyHeal},
     {.id = 5, .name = "Fireblast", .element = FIRE, .power = 10, .effect = NULL},
     {.id = 6, .name = "Cyclone", .element = WIND, .power = 10, .effect = NULL},
-    {.id = 7, .name = "Downpour", .element = WATER, .power = 10, .effect = NULL},
-    {.id = 8, .name = "Mega Punch", .element = PHYSICAL, .power = 10, .effect = NULL},
+    {.id = 7, .name = "Drench", .element = WATER, .power = 10, .effect = NULL},
+    {.id = 8, .name = "Megapunch", .element = PHYSICAL, .power = 10, .effect = NULL},
     {.id = 9, .name = "Weaken", .effect = applyWeaken},
     {.id = 10, .name = "Soften", .effect = applySoften},
     {.id = 11, .name = "Slam", .element = PHYSICAL, .power = 5, .effect = NULL}
@@ -59,8 +59,8 @@ extern const metasprite_t ghost_metasprite0;
 extern const metasprite_t spider_metasprite0;
 extern const metasprite_t boss_metasprite0;
 EnemyType enemyTypes[ENEMY_TYPE_COUNT] = {
-    ENEMY("Slime", 8, 3, 2, 1, 1, WEAK2WIND, NONE, 4, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
-    ENEMY("Zombie", 15, 4, 1, 1, 0, WEAK2FIRE, NONE, 4, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
+    ENEMY("Slime", 8, 4, 2, 1, 1, WEAK2WIND, NONE, 4, &zombie_metasprite0, slime_TILE_COUNT, slime_tiles),
+    ENEMY("Zombie", 15, 5, 1, 1, 0, WEAK2FIRE, NONE, 4, &slime_metasprite0, zombie_TILE_COUNT, zombie_tiles),
     ENEMY("Spider", 25, 9, 4, 1, 4, WEAK2FIRE, NONE, 7, &spider_metasprite0, spider_TILE_COUNT, spider_tiles),
     ENEMY("Skull", 32, 8, 3, 1, 10, WEAK2WATER, NONE, 10, &skull_metasprite0, skull_TILE_COUNT, skull_tiles),
     ENEMY("Ghost", 30, 12, 99, 1, 3, WEAK2WIND, NONE, 18, &ghost_metasprite0, ghost_TILE_COUNT, ghost_tiles),
