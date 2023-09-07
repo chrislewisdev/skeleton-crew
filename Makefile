@@ -12,7 +12,7 @@ PNG2ASSET = $(GBDK_HOME)/bin/png2asset
 LCCFLAGS = -I.
 
 # You can set the name of the .gb ROM file here
-PROJECTNAME    = skelecrew
+PROJECTNAME    = skeleton-crew
 
 SRCDIR      = src
 OBJDIR      = build
